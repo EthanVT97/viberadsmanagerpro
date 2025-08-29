@@ -110,10 +110,10 @@ const Index = () => {
             </p>
             <div className="bg-card border border-border/50 rounded-2xl p-8">
               <p className="text-lg text-muted-foreground mb-4">
-                Email us at: <a href="mailto:contact@viber-ads.com" className="text-primary hover:underline">contact@viber-ads.com</a>
+                Email us at: <a href="mailto:info@ygnb2b.com" className="text-primary hover:underline">info@ygnb2b.com</a>
               </p>
               <p className="text-lg text-muted-foreground">
-                Or call: <a href="tel:+95123456789" className="text-primary hover:underline">+95 123 456 789</a>
+                Or call: <a href="tel:+959784340688" className="text-primary hover:underline">+95 9784340688</a>
               </p>
             </div>
           </div>

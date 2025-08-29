@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Target, BarChart3, Globe } from "lucide-react";
 
@@ -27,17 +28,23 @@ export default function Hero() {
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-          <Button 
-            size="lg" 
-            className="bg-gradient-primary hover:shadow-glow text-primary-foreground border-0 px-8 py-6 text-lg group"
-          >
-            Get Started Today
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
+          <Link to="/auth">
+            <Button 
+              size="lg" 
+              className="bg-gradient-primary hover:shadow-glow text-primary-foreground border-0 px-8 py-6 text-lg group"
+            >
+              Get Started Today
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
           <Button 
             variant="outline" 
             size="lg" 
             className="border-primary/30 hover:bg-primary/10 px-8 py-6 text-lg"
+            onClick={() => {
+              const pricingSection = document.getElementById('pricing');
+              pricingSection?.scrollIntoView({ behavior: 'smooth' });
+            }}
           >
             View Packages
           </Button>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
@@ -8,7 +9,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Settings, Menu, X } from "lucide-react";
+import { User, LogOut, Settings, Menu, X, BarChart3 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -19,6 +20,7 @@ interface NavbarProps {
 export default function Navbar({ user }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
@@ -36,21 +38,8 @@ export default function Navbar({ user }: NavbarProps) {
     }
   };
 
-  const handleSignIn = async () => {
-    try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin
-        }
-      });
-    } catch (error) {
-      toast({
-        title: "Error signing in",
-        description: "Please try again.",
-        variant: "destructive",
-      });
-    }
+  const handleSignIn = () => {
+    navigate("/auth");
   };
 
   return (
@@ -58,26 +47,26 @@ export default function Navbar({ user }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">V</span>
             </div>
             <span className="text-xl font-bold text-foreground">
               Viber Ads Manager
             </span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
               Packages
-            </a>
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link to="/#features" className="text-muted-foreground hover:text-foreground transition-colors">
               Features
-            </a>
-            <a href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link to="/#contact" className="text-muted-foreground hover:text-foreground transition-colors">
               Contact
-            </a>
+            </Link>
             
             {user ? (
               <DropdownMenu>
@@ -97,6 +86,10 @@ export default function Navbar({ user }: NavbarProps) {
                     </div>
                   </div>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </DropdownMenuItem>
                   <DropdownMenuItem>
                     <User className="mr-2 h-4 w-4" />
                     Profile
@@ -140,15 +133,15 @@ export default function Navbar({ user }: NavbarProps) {
         {mobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-border/50">
-              <a href="#pricing" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
+              <Link to="/#pricing" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
                 Packages
-              </a>
-              <a href="#features" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
+              </Link>
+              <Link to="/#features" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
                 Features
-              </a>
-              <a href="#contact" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
+              </Link>
+              <Link to="/#contact" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
                 Contact
-              </a>
+              </Link>
               {user ? (
                 <div className="pt-2 border-t border-border/50">
                   <div className="px-3 py-2 text-sm text-muted-foreground">{user.email}</div>
