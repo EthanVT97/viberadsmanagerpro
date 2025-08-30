@@ -349,6 +349,6 @@ export default function SubscriptionManager({
           )}
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
