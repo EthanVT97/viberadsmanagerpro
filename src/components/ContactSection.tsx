@@ -76,7 +76,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <h4 className="font-medium">Email Support</h4>
-                    <p className="text-muted-foreground">support@viberads.mm</p>
+                    <p className="text-muted-foreground">info@ygnb2b.com</p>
                     <p className="text-sm text-muted-foreground">Response within 24 hours</p>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <h4 className="font-medium">Phone Support</h4>
-                    <p className="text-muted-foreground">+95 9 123 456 789</p>
+                    <p className="text-muted-foreground">+959784340688</p>
                     <p className="text-sm text-muted-foreground">Mon-Fri, 9AM-6PM (Myanmar Time)</p>
                   </div>
                 </div>
