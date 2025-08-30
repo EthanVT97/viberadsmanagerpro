@@ -162,18 +162,18 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background flex items-center justify-center p-4 sm:p-6 lg:p-8">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-hero opacity-5"></div>
-      <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-      <div className="absolute bottom-20 right-20 w-96 h-96 bg-primary-glow/10 rounded-full blur-3xl animate-float" style={{animationDelay: '1s'}}></div>
+      <div className="absolute top-10 left-4 sm:top-20 sm:left-20 w-48 h-48 sm:w-72 sm:h-72 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-10 right-4 sm:bottom-20 sm:right-20 w-64 h-64 sm:w-96 sm:h-96 bg-primary-glow/10 rounded-full blur-3xl animate-float" style={{animationDelay: '1s'}}></div>
       
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md mx-auto">
         <div className="mb-6">
           <Button
             variant="ghost"
             onClick={() => navigate("/")}
-            className="mb-4 hover:bg-primary/10"
+            className="mb-4 hover:bg-primary/10 w-full sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
@@ -185,8 +185,8 @@ export default function Auth() {
                 <span className="text-primary-foreground font-bold text-2xl">V</span>
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Viber Ads Manager</h1>
-            <p className="text-muted-foreground">Myanmar Business Platform</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Viber Ads Manager</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">Myanmar Business Platform</p>
           </div>
         </div>
 
@@ -215,6 +215,7 @@ export default function Auth() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      className="w-full"
                     />
                   </div>
                   <div className="space-y-2">
@@ -227,6 +228,7 @@ export default function Auth() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        className="w-full pr-10"
                       />
                       <Button
                         type="button"
@@ -264,6 +266,7 @@ export default function Auth() {
                       value={businessName}
                       onChange={(e) => setBusinessName(e.target.value)}
                       required
+                      className="w-full"
                     />
                   </div>
                   <div className="space-y-2">
@@ -275,6 +278,7 @@ export default function Auth() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      className="w-full"
                     />
                   </div>
                   <div className="space-y-2">
@@ -285,6 +289,7 @@ export default function Auth() {
                       placeholder="+95 9xxxxxxxxx"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      className="w-full"
                     />
                   </div>
                   <div className="space-y-2">
@@ -298,6 +303,7 @@ export default function Auth() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         minLength={6}
+                        className="w-full pr-10"
                       />
                       <Button
                         type="button"
@@ -324,6 +330,7 @@ export default function Auth() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                       minLength={6}
+                      className="w-full"
                     />
                   </div>
                   <Button
@@ -351,6 +358,7 @@ export default function Auth() {
                 variant="outline"
                 className="w-full mt-4 border-border/50 hover:bg-primary/10"
                 onClick={handleGoogleAuth}
+                disabled={loading}
               >
                 <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
                   <path
@@ -370,7 +378,7 @@ export default function Auth() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                Continue with Google
+                {loading ? "Connecting..." : "Continue with Google"}
               </Button>
             </div>
           </CardContent>

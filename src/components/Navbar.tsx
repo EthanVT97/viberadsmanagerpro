@@ -51,22 +51,49 @@ export default function Navbar({ user }: NavbarProps) {
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">V</span>
             </div>
-            <span className="text-xl font-bold text-foreground">
+            <span className="text-lg sm:text-xl font-bold text-foreground hidden sm:block">
               Viber Ads Manager
+            </span>
+            <span className="text-lg font-bold text-foreground sm:hidden">
+              VAM
             </span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/#pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+            <a 
+              href="#pricing" 
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                const pricingSection = document.getElementById('pricing');
+                pricingSection?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               Packages
-            </Link>
-            <Link to="/#features" className="text-muted-foreground hover:text-foreground transition-colors">
+            </a>
+            <a 
+              href="#features" 
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                const featuresSection = document.getElementById('features');
+                featuresSection?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               Features
-            </Link>
-            <Link to="/#contact" className="text-muted-foreground hover:text-foreground transition-colors">
+            </a>
+            <a 
+              href="#contact" 
+              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                const contactSection = document.getElementById('contact');
+                contactSection?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               Contact
-            </Link>
+            </a>
             
             {user ? (
               <DropdownMenu>
@@ -132,19 +159,57 @@ export default function Navbar({ user }: NavbarProps) {
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-border/50">
-              <Link to="/#pricing" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
+            <div className="px-2 pt-2 pb-3 space-y-1 border-t border-border/50 bg-background/95 backdrop-blur-sm">
+              <a 
+                href="#pricing" 
+                className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  const pricingSection = document.getElementById('pricing');
+                  pricingSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 Packages
-              </Link>
-              <Link to="/#features" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
+              </a>
+              <a 
+                href="#features" 
+                className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  const featuresSection = document.getElementById('features');
+                  featuresSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 Features
-              </Link>
-              <Link to="/#contact" className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground">
+              </a>
+              <a 
+                href="#contact" 
+                className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  const contactSection = document.getElementById('contact');
+                  contactSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
                 Contact
-              </Link>
+              </a>
               {user ? (
                 <div className="pt-2 border-t border-border/50">
-                  <div className="px-3 py-2 text-sm text-muted-foreground">{user.email}</div>
+                  <div className="px-3 py-2 text-sm text-muted-foreground truncate">{user.email}</div>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigate("/dashboard");
+                    }} 
+                    className="w-full justify-start"
+                  >
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Button>
                   <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign out
