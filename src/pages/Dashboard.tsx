@@ -170,15 +170,8 @@ export default function Dashboard() {
         .order('price_euro', { ascending: true });
 
       setPackages(packagesData || []);
-    } catch (error) {
-      toast({
-        title: "Error loading data",
-        description: "Failed to load dashboard data. Please refresh the page.",
+        setPackages(data || []);
         variant: "destructive",
-      });
-    } finally {
-      setLoadingData(false);
-    }
   };
 
   const handleSignOut = async () => {

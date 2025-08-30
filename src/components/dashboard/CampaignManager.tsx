@@ -128,7 +128,7 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
       campaign.id === campaignId
         ? { 
             ...campaign, 
-            status: campaign.status === 'active' ? 'paused' : 'active' as 'active' | 'paused',
+            status: (campaign.status === 'active' ? 'paused' : 'active') as 'active' | 'paused',
             // Simulate some activity when activating
             impressions: campaign.status === 'paused' ? campaign.impressions + Math.floor(Math.random() * 1000) : campaign.impressions,
             clicks: campaign.status === 'paused' ? campaign.clicks + Math.floor(Math.random() * 50) : campaign.clicks,

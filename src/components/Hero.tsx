@@ -80,7 +80,7 @@ export default function Hero() {
               <Globe className="h-8 w-8 text-primary-foreground" />
             </div>
             <h3 className="text-base sm:text-lg font-semibold mb-2 text-foreground sm:col-span-2 lg:col-span-1">Myanmar Focus</h3>
-            <p className="text-sm sm:text-base text-muted-foreground sm:col-span-2 lg:col-span-1">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Specialized platform designed for Myanmar business needs
             </p>
           </div>

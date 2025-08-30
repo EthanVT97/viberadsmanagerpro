@@ -61,7 +61,7 @@ export default function Auth() {
           emailRedirectTo: redirectUrl,
           data: {
             business_name: businessName,
-            phone: phone,
+            phone: phone
           }
         }
       });

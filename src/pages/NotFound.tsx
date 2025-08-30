@@ -6,9 +6,6 @@ import { Home, ArrowLeft } from "lucide-react";
 const NotFound = () => {
   const location = useLocation();
 
-  useEffect(() => {
-  }, [location.pathname]);
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="text-center max-w-md mx-auto">

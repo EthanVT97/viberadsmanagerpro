@@ -42,13 +42,13 @@ export default function ProfileManager({ profile, user, onProfileUpdate }: Profi
     try {
       const { data, error } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          user_id: user.id,
           business_name: formData.business_name,
           contact_email: formData.contact_email,
           phone: formData.phone,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', user.id)
         .select()
         .single();
 
