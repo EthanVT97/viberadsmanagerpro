@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   DropdownMenu, 
@@ -170,7 +171,6 @@ export default function Dashboard() {
 
       setPackages(packagesData || []);
     } catch (error) {
-      console.error('Error fetching user data:', error);
       toast({
         title: "Error loading data",
         description: "Failed to load dashboard data. Please refresh the page.",

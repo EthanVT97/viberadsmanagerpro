@@ -20,7 +20,40 @@ interface PricingSectionProps {
   packages: Package[];
 }
 
+const defaultPackages: Package[] = [
+  {
+    id: '1',
+    name: 'Business Exclusive',
+    description: 'Rakuten Viber - Mobile Application - IOS and ANDROID',
+    price_euro: 15000,
+    features: ['Exclusive business targeting', 'Premium ad placement', 'Myanmar market focus', 'iOS & Android reach']
+  },
+  {
+    id: '2',
+    name: 'Display Reach',
+    description: 'Rakuten Viber - Mobile Application - IOS and ANDROID',
+    price_euro: 15000,
+    features: ['Display advertising', 'Wide audience reach', 'Myanmar market focus', 'iOS & Android reach']
+  },
+  {
+    id: '3',
+    name: 'Daily Essentials',
+    description: 'Rakuten Viber - Mobile Application - IOS and ANDROID',
+    price_euro: 15000,
+    features: ['Daily engagement ads', 'Essential features', 'Myanmar market focus', 'iOS & Android reach']
+  },
+  {
+    id: '4',
+    name: 'Video Pulse',
+    description: 'Rakuten Viber - Mobile Application - IOS and ANDROID',
+    price_euro: 20000,
+    features: ['Video advertising', 'High engagement', 'Myanmar market focus', 'iOS & Android reach']
+  }
+];
+
 export default function PricingSection({ packages }: PricingSectionProps) {
+  const displayPackages = packages.length > 0 ? packages : defaultPackages;
+
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
@@ -106,7 +139,7 @@ export default function PricingSection({ packages }: PricingSectionProps) {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {packages.map((pkg) => (
+          {displayPackages.map((pkg) => (
             <Card 
               key={pkg.id}
               className="relative group hover:shadow-card transition-all duration-300 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm h-full flex flex-col"

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { BarChart3 } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -131,7 +132,7 @@ export default function AnalyticsChart({ campaigns }: AnalyticsChartProps) {
           ) : (
             <div className="h-[300px] flex items-center justify-center text-muted-foreground">
               <div className="text-center">
-                <BarChart className="h-12 w-12 mx-auto mb-4" />
+                <BarChart3 className="h-12 w-12 mx-auto mb-4" />
                 <p>No campaign data available</p>
               </div>
             </div>
