@@ -114,7 +114,6 @@ export default function PricingSection({ packages }: PricingSectionProps) {
         navigate('/dashboard');
       }, 2000);
     } catch (error) {
-      console.error('Error selecting package:', error);
       toast({
         title: "Error",
         description: "Failed to activate package. Please try again.",
