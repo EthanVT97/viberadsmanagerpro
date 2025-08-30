@@ -28,10 +28,15 @@ const Index = () => {
           .eq('is_active', true)
           .order('price_euro', { ascending: true });
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching packages:', error);
+          throw error;
+        }
         setPackages(data || []);
       } catch (error) {
         console.error('Error fetching packages:', error);
+        // Set empty array as fallback to prevent app crash
+        setPackages([]);
       } finally {
         setPackagesLoading(false);
       }

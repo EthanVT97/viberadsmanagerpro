@@ -76,7 +76,27 @@ export default function Dashboard() {
         .eq('user_id', user?.id)
         .maybeSingle();
 
-      setProfile(profileData);
+      // If no profile exists, create one
+      if (!profileData && user) {
+        const { data: newProfile, error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: user.id,
+            contact_email: user.email,
+            business_name: user.user_metadata?.business_name || '',
+            phone: user.user_metadata?.phone || ''
+          })
+          .select()
+          .single();
+
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+        } else {
+          setProfile(newProfile);
+        }
+      } else {
+        setProfile(profileData);
+      }
 
       // Fetch user subscriptions
       const { data: subsData } = await supabase
@@ -122,11 +142,30 @@ export default function Dashboard() {
   };
 
   const handleSubscribeToPackage = async (packageId: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to subscribe to a package.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if user already has an active subscription
+    if (activeSubscription) {
+      toast({
+        title: "Subscription exists",
+        description: "You already have an active subscription. Please cancel it first to change packages.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('subscriptions')
         .insert({
-          user_id: user?.id,
+          user_id: user.id,
           package_id: packageId,
           status: 'active'
         });

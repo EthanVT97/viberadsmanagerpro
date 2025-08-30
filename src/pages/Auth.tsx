@@ -67,7 +67,7 @@ export default function Auth() {
       });
 
       if (error) {
-        if (error.message.includes("already registered")) {
+        if (error.message.includes("already registered") || error.message.includes("User already registered")) {
           toast({
             title: "Account exists",
             description: "This email is already registered. Please sign in instead.",
@@ -79,12 +79,7 @@ export default function Auth() {
         return;
       }
 
-      if (data.user && !data.user.email_confirmed_at) {
-        toast({
-          title: "Check your email",
-          description: "Please check your email and click the confirmation link to complete registration.",
-        });
-      } else {
+      if (data.user) {
         toast({
           title: "Account created successfully!",
           description: "Welcome to Viber Ads Manager.",
@@ -152,6 +147,11 @@ export default function Auth() {
       });
 
       if (error) throw error;
+      
+      toast({
+        title: "Redirecting...",
+        description: "Please complete authentication in the popup window.",
+      });
     } catch (error: any) {
       toast({
         title: "Authentication failed",

@@ -36,18 +36,38 @@ export default function PricingSection({ packages }: PricingSectionProps) {
           description: "Please sign in to select a package",
           variant: "destructive",
         });
+        // Redirect to auth page
+        window.location.href = '/auth';
         return;
       }
 
-      // Here we would integrate with Stripe or payment processing
+      // Create subscription record
+      const { error: subscriptionError } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: user.id,
+          package_id: packageId,
+          status: 'active'
+        });
+
+      if (subscriptionError) {
+        throw subscriptionError;
+      }
+
       toast({
-        title: "Package Selected!",
-        description: "Contact our team to activate your selected package.",
+        title: "Package Activated!",
+        description: "Your package has been activated successfully. Redirecting to dashboard...",
       });
+
+      // Redirect to dashboard after successful subscription
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 2000);
     } catch (error) {
+      console.error('Error selecting package:', error);
       toast({
         title: "Error",
-        description: "Failed to select package. Please try again.",
+        description: "Failed to activate package. Please try again.",
         variant: "destructive",
       });
     } finally {
