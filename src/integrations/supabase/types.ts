@@ -14,6 +14,109 @@ export type Database = {
   }
   public: {
     Tables: {
+      ads: {
+        Row: {
+          ad_type: string
+          budget: number
+          campaign_id: string
+          created_at: string
+          description: string | null
+          headline: string | null
+          id: string
+          image_url: string | null
+          name: string
+          performance_data: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          ad_type: string
+          budget?: number
+          campaign_id: string
+          created_at?: string
+          description?: string | null
+          headline?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          performance_data?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          ad_type?: string
+          budget?: number
+          campaign_id?: string
+          created_at?: string
+          description?: string | null
+          headline?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          performance_data?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ads_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_analytics: {
+        Row: {
+          campaign_id: string
+          clicks: number | null
+          conversions: number | null
+          created_at: string
+          date: string
+          id: string
+          impressions: number | null
+          reach: number | null
+          spend: number | null
+        }
+        Insert: {
+          campaign_id: string
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          impressions?: number | null
+          reach?: number | null
+          spend?: number | null
+        }
+        Update: {
+          campaign_id?: string
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string
+          date?: string
+          id?: string
+          impressions?: number | null
+          reach?: number | null
+          spend?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_analytics_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           budget_euro: number

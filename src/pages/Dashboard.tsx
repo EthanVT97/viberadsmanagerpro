@@ -46,12 +46,27 @@ interface Subscription {
   packages: Package;
 }
 
+interface Campaign {
+  id: string;
+  name: string;
+  description: string;
+  status: string;
+  budget_euro: number;
+  target_audience: string;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [packages, setPackages] = useState<Package[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
@@ -89,6 +104,15 @@ export default function Dashboard() {
         .eq('user_id', user?.id);
 
       setSubscriptions(subsData || []);
+
+      // Fetch user campaigns
+      const { data: campaignsData } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      setCampaigns(campaignsData || []);
 
       // Fetch available packages
       const { data: packagesData } = await supabase
@@ -146,6 +170,15 @@ export default function Dashboard() {
         description: error.message || "Failed to activate subscription.",
         variant: "destructive",
       });
+    }
+  };
+
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'paused': return 'bg-yellow-100 text-yellow-800';
+      case 'completed': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -236,10 +269,10 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {activeSubscription ? '1' : '0'}
+                {campaigns.filter(c => c.status === 'active').length}
               </div>
               <p className="text-xs text-muted-foreground">
-                +0% from last month
+                Running campaigns
               </p>
             </CardContent>
           </Card>
@@ -338,7 +371,11 @@ export default function Dashboard() {
                   <CardDescription>Manage your advertising</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button className="w-full justify-start" variant="outline">
+                  <Button 
+                    onClick={() => navigate("/campaigns/create")}
+                    className="w-full justify-start" 
+                    variant="outline"
+                  >
                     <Plus className="mr-2 h-4 w-4" />
                     Create New Campaign
                   </Button>
@@ -361,27 +398,85 @@ export default function Dashboard() {
                 <h2 className="text-2xl font-bold">Campaigns</h2>
                 <p className="text-muted-foreground">Manage your Viber advertising campaigns</p>
               </div>
-              <Button className="bg-gradient-primary text-primary-foreground border-0">
+              <Button 
+                onClick={() => navigate("/campaigns/create")}
+                className="bg-gradient-primary text-primary-foreground border-0"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 New Campaign
               </Button>
             </div>
 
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center py-12">
-                  <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="font-semibold mb-2">No campaigns yet</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Create your first campaign to start advertising on Viber
-                  </p>
-                  <Button className="bg-gradient-primary text-primary-foreground border-0">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Campaign
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            {campaigns.length === 0 ? (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="text-center py-12">
+                    <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="font-semibold mb-2">No campaigns yet</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Create your first campaign to start advertising on Viber
+                    </p>
+                    <Button 
+                      onClick={() => navigate("/campaigns/create")}
+                      className="bg-gradient-primary text-primary-foreground border-0"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Campaign
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-4">
+                {campaigns.map((campaign) => (
+                  <Card key={campaign.id} className="hover:shadow-card transition-shadow cursor-pointer">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1" onClick={() => navigate(`/campaigns/${campaign.id}`)}>
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="font-semibold text-lg">{campaign.name}</h3>
+                            <Badge className={`${getStatusBadgeColor(campaign.status)}`}>
+                              {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                            </Badge>
+                          </div>
+                          <p className="text-muted-foreground mb-3">{campaign.description}</p>
+                          <div className="grid grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <span className="text-muted-foreground">Budget:</span>
+                              <p className="font-medium">€{campaign.budget_euro / 100}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Impressions:</span>
+                              <p className="font-medium">{campaign.impressions?.toLocaleString() || '0'}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Clicks:</span>
+                              <p className="font-medium">{campaign.clicks?.toLocaleString() || '0'}</p>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Created:</span>
+                              <p className="font-medium">{new Date(campaign.created_at).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/campaigns/${campaign.id}`);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="packages" className="space-y-6">
