@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      campaigns: {
+        Row: {
+          budget_euro: number
+          clicks: number | null
+          conversions: number | null
+          created_at: string | null
+          description: string | null
+          id: string
+          impressions: number | null
+          name: string
+          status: string
+          target_audience: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          budget_euro: number
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          impressions?: number | null
+          name: string
+          status?: string
+          target_audience?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          budget_euro?: number
+          clicks?: number | null
+          conversions?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          impressions?: number | null
+          name?: string
+          status?: string
+          target_audience?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       packages: {
         Row: {
           created_at: string
