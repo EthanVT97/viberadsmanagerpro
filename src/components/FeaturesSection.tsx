@@ -61,31 +61,36 @@ export default function FeaturesSection() {
   ];
 
   return (
-    <section id="features" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 bg-gradient-hero bg-clip-text text-transparent">
+    <section id="features" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-surface relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl opacity-60"></div>
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-primary-glow/8 rounded-full blur-3xl opacity-40"></div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-16 sm:mb-20 animate-fade-in-scale">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gradient-hero">
             Powerful Features for Myanmar Businesses
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
             Everything you need to create, manage, and optimize successful advertising campaigns on Viber's platform
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
           {features.map((feature, index) => (
             <Card 
               key={index}
-              className="group hover:shadow-card transition-all duration-300 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm"
+              className="group glass-card hover:shadow-strong transition-elegant duration-500 border-border/30 hover:border-primary/30 hover-lift"
+              style={{animationDelay: `${index * 0.1}s`}}
             >
-              <CardHeader>
-                <div className="w-12 h-12 mb-4 bg-gradient-primary rounded-xl flex items-center justify-center group-hover:shadow-glow transition-shadow">
-                  <feature.icon className="h-6 w-6 text-primary-foreground" />
+              <CardHeader className="pb-6">
+                <div className="w-16 h-16 mb-6 bg-gradient-primary rounded-2xl flex items-center justify-center hover-glow hover-scale transition-elegant shadow-soft">
+                  <feature.icon className="h-8 w-8 text-primary-foreground" />
                 </div>
-                <CardTitle className="text-lg font-semibold">{feature.title}</CardTitle>
+                <CardTitle className="text-xl font-bold text-foreground mb-3">{feature.title}</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription className="text-sm leading-relaxed">
+                <CardDescription className="text-base leading-relaxed text-muted-foreground">
                   {feature.description}
                 </CardDescription>
               </CardContent>

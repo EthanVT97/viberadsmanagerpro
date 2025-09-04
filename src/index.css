@@ -37,19 +37,26 @@ All colors MUST be HSL.
     --input: 220 13% 91%;
     --ring: 259 83% 57%;
 
-    /* Viber-inspired gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(259, 83%, 57%), hsl(264, 100%, 75%));
-    --gradient-secondary: linear-gradient(135deg, hsl(240, 38%, 24%), hsl(259, 83%, 57%));
-    --gradient-hero: linear-gradient(135deg, hsl(259, 83%, 57%) 0%, hsl(264, 100%, 75%) 50%, hsl(280, 100%, 80%) 100%);
+    /* Professional Business Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(259, 83%, 57%) 0%, hsl(264, 89%, 65%) 50%, hsl(268, 95%, 73%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(240, 38%, 24%) 0%, hsl(250, 45%, 32%) 50%, hsl(259, 83%, 57%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(259, 83%, 57%) 0%, hsl(264, 95%, 70%) 25%, hsl(268, 100%, 75%) 50%, hsl(272, 90%, 80%) 75%, hsl(276, 85%, 85%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(200, 100%, 92%) 0%, hsl(210, 100%, 88%) 50%, hsl(220, 100%, 95%) 100%);
+    --gradient-surface: linear-gradient(145deg, hsl(0, 0%, 100%) 0%, hsl(220, 25%, 98%) 50%, hsl(230, 20%, 96%) 100%);
     
-    /* Elegant shadows */
-    --shadow-elegant: 0 10px 30px -10px hsl(259 83% 57% / 0.3);
-    --shadow-glow: 0 0 40px hsl(264 100% 75% / 0.4);
-    --shadow-card: 0 4px 20px -4px hsl(259 83% 57% / 0.15);
+    /* Professional Shadows & Effects */
+    --shadow-elegant: 0 25px 50px -12px hsl(259 83% 57% / 0.25);
+    --shadow-glow: 0 0 60px hsl(264 95% 70% / 0.4), 0 0 100px hsl(268 100% 75% / 0.15);
+    --shadow-card: 0 8px 32px -8px hsl(259 83% 57% / 0.12), 0 2px 8px -2px hsl(259 83% 57% / 0.08);
+    --shadow-soft: 0 4px 16px -4px hsl(220 25% 25% / 0.08), 0 2px 8px -2px hsl(220 25% 25% / 0.04);
+    --shadow-medium: 0 8px 24px -8px hsl(220 25% 25% / 0.12), 0 4px 12px -4px hsl(220 25% 25% / 0.06);
+    --shadow-strong: 0 16px 48px -16px hsl(220 25% 25% / 0.18), 0 8px 24px -8px hsl(220 25% 25% / 0.08);
     
-    /* Smooth transitions */
+    /* Professional Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-spring: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --transition-spring: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.175);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-elegant: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 
     --radius: 0.5rem;
 
@@ -143,6 +150,14 @@ All colors MUST be HSL.
     background: var(--gradient-hero);
   }
   
+  .bg-gradient-accent {
+    background: var(--gradient-accent);
+  }
+  
+  .bg-gradient-surface {
+    background: var(--gradient-surface);
+  }
+  
   .shadow-elegant {
     box-shadow: var(--shadow-elegant);
   }
@@ -153,6 +168,67 @@ All colors MUST be HSL.
   
   .shadow-card {
     box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .shadow-medium {
+    box-shadow: var(--shadow-medium);
+  }
+  
+  .shadow-strong {
+    box-shadow: var(--shadow-strong);
+  }
+  
+  /* Professional Animation Classes */
+  .transition-elegant {
+    transition: var(--transition-elegant);
+  }
+  
+  .transition-spring {
+    transition: var(--transition-spring);
+  }
+  
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+  
+  /* Professional Interactive Elements */
+  .hover-lift {
+    @apply transition-elegant hover:-translate-y-1 hover:shadow-medium;
+  }
+  
+  .hover-glow {
+    @apply transition-elegant hover:shadow-glow;
+  }
+  
+  .hover-scale {
+    @apply transition-elegant hover:scale-105;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+  
+  /* Professional Text Gradients */
+  .text-gradient-primary {
+    @apply bg-gradient-primary bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-hero {
+    @apply bg-gradient-hero bg-clip-text text-transparent;
+  }
+  
+  /* Professional Blur Effects */
+  .backdrop-blur-glass {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-glass border border-border/50;
   }
   
   /* Responsive text utilities */
@@ -201,6 +277,33 @@ All colors MUST be HSL.
   50% { 
     box-shadow: 0 0 40px hsl(264 100% 75% / 0.6); 
   }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(100%); }
 }
 
 /* Ensure proper mobile scrolling */

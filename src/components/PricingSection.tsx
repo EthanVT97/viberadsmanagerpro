@@ -126,61 +126,68 @@ export default function PricingSection({ packages }: PricingSectionProps) {
   };
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-background via-muted to-background">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 bg-gradient-hero bg-clip-text text-transparent">
+    <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-background via-background to-muted/30 relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-1/4 left-0 w-72 h-72 bg-primary/5 rounded-full blur-3xl opacity-50"></div>
+      <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-primary-glow/8 rounded-full blur-3xl opacity-30"></div>
+      
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="text-center mb-16 sm:mb-20 animate-fade-in-scale">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gradient-hero">
             Choose Your Viber Ads Package
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+          <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto px-4 leading-relaxed">
             Select the perfect package for your Myanmar business growth on Viber
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {displayPackages.map((pkg) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          {displayPackages.map((pkg, index) => (
             <Card 
               key={pkg.id}
-              className="relative group hover:shadow-card transition-all duration-300 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm h-full flex flex-col"
+              className={`relative group glass-card hover:shadow-strong transition-elegant duration-500 border-border/30 hover:border-primary/40 h-full flex flex-col hover-lift animate-slide-up ${
+                pkg.name === "Video Pulse" ? "ring-2 ring-primary/20 shadow-glow" : ""
+              }`}
+              style={{animationDelay: `${index * 0.1}s`}}
             >
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <CardTitle className="text-base sm:text-lg font-semibold text-foreground">
+              <CardHeader className="pb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <CardTitle className="text-lg sm:text-xl font-bold text-foreground">
                     {pkg.name}
                   </CardTitle>
                   {pkg.name === "Video Pulse" && (
-                    <Badge className="bg-gradient-primary text-primary-foreground border-0">
+                    <Badge className="bg-gradient-primary text-primary-foreground border-0 shadow-soft hover:shadow-glow transition-elegant">
                       Premium
                     </Badge>
                   )}
                 </div>
-                <CardDescription className="text-xs sm:text-sm text-muted-foreground mb-4">
+                <CardDescription className="text-sm sm:text-base text-muted-foreground mb-6 leading-relaxed">
                   {pkg.description}
                 </CardDescription>
                 <div className="text-center">
-                  <span className="text-2xl sm:text-3xl font-bold text-primary">
+                  <span className="text-3xl sm:text-4xl font-bold text-gradient-primary">
                     €{pkg.price_euro / 100}
                   </span>
-                  <span className="text-sm sm:text-base text-muted-foreground ml-1">/month</span>
+                  <span className="text-base sm:text-lg text-muted-foreground ml-2">/month</span>
                 </div>
               </CardHeader>
               
               <CardContent className="pt-0 flex-1 flex flex-col">
-                <ul className="space-y-2 mb-6 flex-1">
-                  {pkg.features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-2 text-xs sm:text-sm">
-                      <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                      <span className="text-muted-foreground">{feature}</span>
+                <ul className="space-y-3 mb-8 flex-1">
+                  {pkg.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-start gap-3 text-sm sm:text-base">
+                      <Check className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                      <span className="text-muted-foreground leading-relaxed">{feature}</span>
                     </li>
                   ))}
                 </ul>
                 
                 <Button 
-                  className={`w-full transition-all duration-300 ${
+                  className={`w-full transition-elegant duration-500 font-semibold py-3 sm:py-4 text-base shadow-soft hover-lift ${
                     pkg.name === "Video Pulse" 
-                      ? "bg-gradient-primary hover:shadow-glow text-primary-foreground border-0" 
-                      : "bg-secondary hover:bg-secondary/80"
-                  } text-sm sm:text-base py-2 sm:py-3`}
+                      ? "bg-gradient-primary hover:shadow-glow text-primary-foreground border-0 rounded-xl" 
+                      : "bg-secondary hover:bg-secondary/80 hover:shadow-medium rounded-xl"
+                  }`}
                   onClick={() => handleSelectPackage(pkg.id)}
                   disabled={loading && selectedPackage === pkg.id}
                 >

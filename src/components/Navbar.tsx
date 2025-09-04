@@ -43,27 +43,32 @@ export default function Navbar({ user }: NavbarProps) {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">V</span>
+        <div className="flex items-center justify-between h-20">
+          {/* Enhanced Logo */}
+          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-elegant hover-lift">
+            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-soft hover:shadow-glow transition-elegant">
+              <span className="text-primary-foreground font-bold text-xl">V</span>
             </div>
-            <span className="text-lg sm:text-xl font-bold text-foreground hidden sm:block">
-              Viber Ads Manager
-            </span>
-            <span className="text-lg font-bold text-foreground sm:hidden">
+            <div className="hidden sm:block">
+              <span className="text-xl font-bold text-gradient-primary">
+                Viber Ads Manager
+              </span>
+              <div className="text-xs text-muted-foreground font-medium">
+                Myanmar Business Solutions
+              </div>
+            </div>
+            <span className="text-xl font-bold text-gradient-primary sm:hidden">
               VAM
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* Enhanced Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-10">
             <a 
               href="#pricing" 
-              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              className="text-muted-foreground hover:text-primary transition-elegant cursor-pointer font-medium hover-lift"
               onClick={(e) => {
                 e.preventDefault();
                 const pricingSection = document.getElementById('pricing');
@@ -74,7 +79,7 @@ export default function Navbar({ user }: NavbarProps) {
             </a>
             <a 
               href="#features" 
-              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              className="text-muted-foreground hover:text-primary transition-elegant cursor-pointer font-medium hover-lift"
               onClick={(e) => {
                 e.preventDefault();
                 const featuresSection = document.getElementById('features');
@@ -85,7 +90,7 @@ export default function Navbar({ user }: NavbarProps) {
             </a>
             <a 
               href="#contact" 
-              className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              className="text-muted-foreground hover:text-primary transition-elegant cursor-pointer font-medium hover-lift"
               onClick={(e) => {
                 e.preventDefault();
                 const contactSection = document.getElementById('contact');
@@ -98,46 +103,52 @@ export default function Navbar({ user }: NavbarProps) {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-gradient-primary text-primary-foreground">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full hover-lift transition-elegant">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-gradient-primary text-primary-foreground font-semibold">
                         {user.email?.[0]?.toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
-                  <div className="flex items-center justify-start gap-2 p-2">
+                <DropdownMenuContent className="w-64 glass-card shadow-strong border border-border/50" align="end">
+                  <div className="flex items-center justify-start gap-3 p-4">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-gradient-primary text-primary-foreground text-sm font-semibold">
+                        {user.email?.[0]?.toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium">{user.email}</p>
+                      <p className="font-medium text-foreground">{user.email}</p>
+                      <p className="text-xs text-muted-foreground">Myanmar Business User</p>
                     </div>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                    <BarChart3 className="mr-2 h-4 w-4" />
-                    Dashboard
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")} className="cursor-pointer hover:bg-primary/10 transition-elegant">
+                    <BarChart3 className="mr-3 h-4 w-4 text-primary" />
+                    <span className="font-medium">Dashboard</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
+                  <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 transition-elegant">
+                    <User className="mr-3 h-4 w-4 text-primary" />
+                    <span className="font-medium">Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
+                  <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 transition-elegant">
+                    <Settings className="mr-3 h-4 w-4 text-primary" />
+                    <span className="font-medium">Settings</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign out
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer hover:bg-destructive/10 text-destructive transition-elegant">
+                    <LogOut className="mr-3 h-4 w-4" />
+                    <span className="font-medium">Sign out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" onClick={handleSignIn}>
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" onClick={handleSignIn} className="font-medium hover-lift transition-elegant">
                   Sign In
                 </Button>
-                <Button className="bg-gradient-primary text-primary-foreground border-0" onClick={handleSignIn}>
+                <Button className="bg-gradient-primary text-primary-foreground border-0 font-semibold hover:shadow-glow hover-lift transition-elegant rounded-xl px-6 py-2 shadow-soft" onClick={handleSignIn}>
                   Get Started
                 </Button>
               </div>

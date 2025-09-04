@@ -72,16 +72,23 @@ export default {
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-secondary': 'var(--gradient-secondary)',
-				'gradient-hero': 'var(--gradient-hero)'
+				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-accent': 'var(--gradient-accent)',
+				'gradient-surface': 'var(--gradient-surface)'
 			},
 			boxShadow: {
 				'elegant': 'var(--shadow-elegant)',
 				'glow': 'var(--shadow-glow)',
-				'card': 'var(--shadow-card)'
+				'card': 'var(--shadow-card)',
+				'soft': 'var(--shadow-soft)',
+				'medium': 'var(--shadow-medium)',
+				'strong': 'var(--shadow-strong)'
 			},
 			transitionTimingFunction: {
 				'smooth': 'var(--transition-smooth)',
-				'spring': 'var(--transition-spring)'
+				'spring': 'var(--transition-spring)',
+				'bounce': 'var(--transition-bounce)',
+				'elegant': 'var(--transition-elegant)'
 			},
 			keyframes: {
 				'accordion-down': {
@@ -107,13 +114,40 @@ export default {
 				'pulse-glow': {
 					'0%, 100%': { boxShadow: '0 0 20px hsl(259 83% 57% / 0.4)' },
 					'50%': { boxShadow: '0 0 40px hsl(264 100% 75% / 0.6)' }
+				},
+				'slide-up': {
+					'from': {
+						opacity: '0',
+						transform: 'translateY(30px)'
+					},
+					'to': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'fade-in-scale': {
+					'from': {
+						opacity: '0',
+						transform: 'scale(0.95)'
+					},
+					'to': {
+						opacity: '1',
+						transform: 'scale(1)'
+					}
+				},
+				'shine': {
+					'0%': { transform: 'translateX(-100%)' },
+					'50%, 100%': { transform: 'translateX(100%)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'float': 'float 3s ease-in-out infinite',
-				'pulse-glow': 'pulse-glow 2s ease-in-out infinite'
+				'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+				'slide-up': 'slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+				'fade-in-scale': 'fade-in-scale 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+				'shine': 'shine 2s ease-in-out infinite'
 			}
 		}
 	},
