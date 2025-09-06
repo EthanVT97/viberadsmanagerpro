@@ -28,6 +28,10 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import AnalyticsChart from "@/components/dashboard/AnalyticsChart";
+import CampaignManager from "@/components/dashboard/CampaignManager";
+import ProfileManager from "@/components/dashboard/ProfileManager";
+import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 
 interface Package {
   id: string;
@@ -70,6 +74,7 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<any>(null);
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [analytics, setAnalytics] = useState<any[]>([]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -122,6 +127,15 @@ export default function Dashboard() {
         .order('price_euro', { ascending: true });
 
       setPackages(packagesData || []);
+
+      // Fetch analytics data
+      const { data: analyticsData } = await supabase
+        .from('campaign_analytics')
+        .select('*')
+        .order('date', { ascending: false })
+        .limit(30);
+
+      setAnalytics(analyticsData || []);
     } catch (error) {
       console.error('Error fetching user data:', error);
     } finally {
@@ -279,11 +293,13 @@ export default function Dashboard() {
 
           <Card className="hover:shadow-card transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Reach</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Reach</CardTitle>
               <Target className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">
+                {campaigns.reduce((total, campaign) => total + (campaign.impressions || 0), 0).toLocaleString()}
+              </div>
               <p className="text-xs text-muted-foreground">
                 Myanmar users reached
               </p>
@@ -292,26 +308,30 @@ export default function Dashboard() {
 
           <Card className="hover:shadow-card transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Spend</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Spend</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">€0</div>
+              <div className="text-2xl font-bold">
+                €{campaigns.reduce((total, campaign) => total + (campaign.budget_euro || 0), 0) / 100}
+              </div>
               <p className="text-xs text-muted-foreground">
-                This month
+                Campaign budgets
               </p>
             </CardContent>
           </Card>
 
           <Card className="hover:shadow-card transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Conversions</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Conversions</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">0</div>
+              <div className="text-2xl font-bold">
+                {campaigns.reduce((total, campaign) => total + (campaign.conversions || 0), 0)}
+              </div>
               <p className="text-xs text-muted-foreground">
-                +0% from last month
+                Total conversions
               </p>
             </CardContent>
           </Card>
@@ -319,9 +339,11 @@ export default function Dashboard() {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="packages">Packages</TabsTrigger>
           </TabsList>
 
@@ -393,160 +415,73 @@ export default function Dashboard() {
           </TabsContent>
 
           <TabsContent value="campaigns" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">Campaigns</h2>
-                <p className="text-muted-foreground">Manage your Viber advertising campaigns</p>
-              </div>
-              <Button 
-                onClick={() => navigate("/campaigns/create")}
-                className="bg-gradient-primary text-primary-foreground border-0"
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                New Campaign
-              </Button>
-            </div>
+            <CampaignManager 
+              campaigns={campaigns.map(campaign => ({
+                id: campaign.id,
+                name: campaign.name,
+                status: campaign.status as 'active' | 'paused' | 'draft',
+                budget: campaign.budget_euro / 100,
+                impressions: campaign.impressions || 0,
+                clicks: campaign.clicks || 0,
+                conversions: campaign.conversions || 0,
+                targetAudience: campaign.target_audience || '',
+                description: campaign.description || '',
+                createdAt: campaign.created_at
+              }))}
+              onCampaignsChange={(updatedCampaigns) => {
+                // This will be handled by the real Supabase integration
+                fetchUserData();
+              }}
+            />
+          </TabsContent>
 
-            {campaigns.length === 0 ? (
-              <Card>
-                <CardContent className="p-6">
-                  <div className="text-center py-12">
-                    <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="font-semibold mb-2">No campaigns yet</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Create your first campaign to start advertising on Viber
-                    </p>
-                    <Button 
-                      onClick={() => navigate("/campaigns/create")}
-                      className="bg-gradient-primary text-primary-foreground border-0"
-                    >
-                      <Plus className="mr-2 h-4 w-4" />
-                      Create Campaign
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-4">
-                {campaigns.map((campaign) => (
-                  <Card key={campaign.id} className="hover:shadow-card transition-shadow cursor-pointer">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1" onClick={() => navigate(`/campaigns/${campaign.id}`)}>
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold text-lg">{campaign.name}</h3>
-                            <Badge className={`${getStatusBadgeColor(campaign.status)}`}>
-                              {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
-                            </Badge>
-                          </div>
-                          <p className="text-muted-foreground mb-3">{campaign.description}</p>
-                          <div className="grid grid-cols-4 gap-4 text-sm">
-                            <div>
-                              <span className="text-muted-foreground">Budget:</span>
-                              <p className="font-medium">€{campaign.budget_euro / 100}</p>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Impressions:</span>
-                              <p className="font-medium">{campaign.impressions?.toLocaleString() || '0'}</p>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Clicks:</span>
-                              <p className="font-medium">{campaign.clicks?.toLocaleString() || '0'}</p>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Created:</span>
-                              <p className="font-medium">{new Date(campaign.created_at).toLocaleDateString()}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/campaigns/${campaign.id}`);
-                            }}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">Analytics & Insights</h2>
+              <p className="text-muted-foreground">Track your campaign performance and audience engagement</p>
+            </div>
+            <AnalyticsChart 
+              campaigns={campaigns.map(campaign => ({
+                id: campaign.id,
+                name: campaign.name,
+                status: campaign.status as 'active' | 'paused' | 'draft',
+                budget: campaign.budget_euro / 100,
+                impressions: campaign.impressions || 0,
+                clicks: campaign.clicks || 0,
+                conversions: campaign.conversions || 0
+              }))}
+            />
+          </TabsContent>
+
+          <TabsContent value="profile" className="space-y-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">Profile Settings</h2>
+              <p className="text-muted-foreground">Manage your business profile and account settings</p>
+            </div>
+            <ProfileManager 
+              profile={profile}
+              user={user}
+              onProfileUpdate={(updatedProfile) => {
+                setProfile(updatedProfile);
+                toast({
+                  title: "Profile updated",
+                  description: "Your profile has been updated successfully.",
+                });
+              }}
+            />
           </TabsContent>
 
           <TabsContent value="packages" className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Available Packages</h2>
-              <p className="text-muted-foreground">Choose the perfect package for your business</p>
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">Subscription Management</h2>
+              <p className="text-muted-foreground">Manage your Viber advertising packages and subscriptions</p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {packages.map((pkg) => (
-                <Card 
-                  key={pkg.id}
-                  className={`relative group hover:shadow-card transition-all duration-300 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm ${
-                    activeSubscription?.package_id === pkg.id ? 'ring-2 ring-primary' : ''
-                  }`}
-                >
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <CardTitle className="text-lg font-semibold text-foreground">
-                        {pkg.name}
-                      </CardTitle>
-                      {activeSubscription?.package_id === pkg.id && (
-                        <Badge className="bg-gradient-primary text-primary-foreground border-0">
-                          Current
-                        </Badge>
-                      )}
-                      {pkg.name === "Video Pulse" && activeSubscription?.package_id !== pkg.id && (
-                        <Badge className="bg-gradient-primary text-primary-foreground border-0">
-                          Premium
-                        </Badge>
-                      )}
-                    </div>
-                    <CardDescription className="text-sm text-muted-foreground mb-4">
-                      {pkg.description}
-                    </CardDescription>
-                    <div className="text-center">
-                      <span className="text-3xl font-bold text-primary">
-                        €{pkg.price_euro / 100}
-                      </span>
-                      <span className="text-muted-foreground ml-1">/month</span>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="pt-0">
-                    <ul className="space-y-2 mb-6">
-                      {pkg.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 shrink-0"></div>
-                          <span className="text-muted-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    <Button 
-                      className={`w-full transition-all duration-300 ${
-                        activeSubscription?.package_id === pkg.id
-                          ? "bg-secondary hover:bg-secondary/80 text-secondary-foreground"
-                          : pkg.name === "Video Pulse" 
-                            ? "bg-gradient-primary hover:shadow-glow text-primary-foreground border-0" 
-                            : "bg-secondary hover:bg-secondary/80"
-                      }`}
-                      onClick={() => activeSubscription?.package_id !== pkg.id && handleSubscribeToPackage(pkg.id)}
-                      disabled={activeSubscription?.package_id === pkg.id}
-                    >
-                      {activeSubscription?.package_id === pkg.id ? "Current Package" : "Select Package"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <SubscriptionManager 
+              subscriptions={subscriptions}
+              packages={packages}
+              user={user}
+              onSubscriptionChange={fetchUserData}
+            />
           </TabsContent>
         </Tabs>
       </main>

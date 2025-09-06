@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +20,8 @@ import {
   TrendingUp
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Campaign {
   id: string;
@@ -35,12 +38,15 @@ interface Campaign {
 
 interface CampaignManagerProps {
   campaigns: Campaign[];
-  onCampaignsChange: (campaigns: Campaign[]) => void;
+  onCampaignsChange: () => void;
 }
 
 export default function CampaignManager({ campaigns, onCampaignsChange }: CampaignManagerProps) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     budget: '',
@@ -91,8 +97,8 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
     });
   };
 
-  const handleEditCampaign = () => {
-    if (!editingCampaign || !formData.name || !formData.budget) {
+  const handleEditCampaign = async () => {
+    if (!editingCampaign || !formData.name || !formData.budget || !user) {
       toast({
         title: "Missing information",
         description: "Please fill in campaign name and budget.",
@@ -101,60 +107,106 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
       return;
     }
 
-    const updatedCampaigns = campaigns.map(campaign =>
-      campaign.id === editingCampaign.id
-        ? {
-            ...campaign,
-            name: formData.name,
-            budget: parseInt(formData.budget),
-            targetAudience: formData.targetAudience,
-            description: formData.description
-          }
-        : campaign
-    );
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .update({
+          name: formData.name,
+          budget_euro: parseInt(formData.budget) * 100, // Convert to cents
+          target_audience: formData.targetAudience,
+          description: formData.description
+        })
+        .eq('id', editingCampaign.id)
+        .eq('user_id', user.id);
 
-    onCampaignsChange(updatedCampaigns);
-    resetForm();
-    setEditingCampaign(null);
+      if (error) throw error;
 
-    toast({
-      title: "Campaign updated!",
-      description: "Your campaign has been updated successfully.",
-    });
+      resetForm();
+      setEditingCampaign(null);
+      onCampaignsChange();
+
+      toast({
+        title: "Campaign updated!",
+        description: "Your campaign has been updated successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error updating campaign",
+        description: error.message || "Failed to update campaign",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const toggleCampaignStatus = (campaignId: string) => {
-    const updatedCampaigns = campaigns.map(campaign =>
-      campaign.id === campaignId
-        ? { 
-            ...campaign, 
-            status: (campaign.status === 'active' ? 'paused' : 'active') as 'active' | 'paused',
-            // Simulate some activity when activating
-            impressions: campaign.status === 'paused' ? campaign.impressions + Math.floor(Math.random() * 1000) : campaign.impressions,
-            clicks: campaign.status === 'paused' ? campaign.clicks + Math.floor(Math.random() * 50) : campaign.clicks,
-            conversions: campaign.status === 'paused' ? campaign.conversions + Math.floor(Math.random() * 5) : campaign.conversions
-          }
-        : campaign
-    );
-
-    onCampaignsChange(updatedCampaigns);
-
-    const campaign = campaigns.find(c => c.id === campaignId);
-    toast({
-      title: `Campaign ${campaign?.status === 'active' ? 'paused' : 'activated'}`,
-      description: `${campaign?.name} has been ${campaign?.status === 'active' ? 'paused' : 'activated'}.`,
-    });
-  };
-
-  const deleteCampaign = (campaignId: string) => {
-    const campaign = campaigns.find(c => c.id === campaignId);
-    const updatedCampaigns = campaigns.filter(c => c.id !== campaignId);
-    onCampaignsChange(updatedCampaigns);
+  const toggleCampaignStatus = async (campaignId: string) => {
+    if (!user) return;
     
-    toast({
-      title: "Campaign deleted",
-      description: `${campaign?.name} has been deleted.`,
-    });
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (!campaign) return;
+
+    const newStatus = campaign.status === 'active' ? 'paused' : 'active';
+    
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .update({ status: newStatus })
+        .eq('id', campaignId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      onCampaignsChange();
+
+      toast({
+        title: `Campaign ${newStatus === 'paused' ? 'paused' : 'activated'}`,
+        description: `${campaign.name} has been ${newStatus === 'paused' ? 'paused' : 'activated'}.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error updating campaign",
+        description: error.message || "Failed to update campaign status",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteCampaign = async (campaignId: string) => {
+    if (!user) return;
+    
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (!campaign) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .delete()
+        .eq('id', campaignId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      onCampaignsChange();
+
+      toast({
+        title: "Campaign deleted",
+        description: `${campaign.name} has been deleted.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error deleting campaign",
+        description: error.message || "Failed to delete campaign",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const openEditDialog = (campaign: Campaign) => {
@@ -241,6 +293,7 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                       size="sm"
                       onClick={() => toggleCampaignStatus(campaign.id)}
                       className="flex-1 lg:flex-none"
+                      disabled={loading}
                     >
                       {campaign.status === 'active' ? (
                         <>
@@ -259,6 +312,7 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                       size="sm"
                       onClick={() => openEditDialog(campaign)}
                       className="flex-1 lg:flex-none"
+                      disabled={loading}
                     >
                       <Edit className="mr-2 h-4 w-4" />
                       Edit
@@ -268,6 +322,7 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                       size="sm"
                       onClick={() => deleteCampaign(campaign.id)}
                       className="flex-1 lg:flex-none text-destructive hover:text-destructive"
+                      disabled={loading}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
                       Delete
@@ -354,11 +409,11 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setShowCreateDialog(false)} className="flex-1">
+            <Button variant="outline" onClick={() => setShowCreateDialog(false)} className="flex-1" disabled={loading}>
               Cancel
             </Button>
-            <Button onClick={handleCreateCampaign} className="bg-gradient-primary text-primary-foreground border-0 flex-1">
-              Create Campaign
+            <Button onClick={handleCreateCampaign} className="bg-gradient-primary text-primary-foreground border-0 flex-1" disabled={loading}>
+              {loading ? "Creating..." : "Create Campaign"}
             </Button>
           </div>
         </DialogContent>
@@ -419,11 +474,11 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={closeEditDialog} className="flex-1">
+            <Button variant="outline" onClick={closeEditDialog} className="flex-1" disabled={loading}>
               Cancel
             </Button>
-            <Button onClick={handleEditCampaign} className="bg-gradient-primary text-primary-foreground border-0 flex-1">
-              Update Campaign
+            <Button onClick={handleEditCampaign} className="bg-gradient-primary text-primary-foreground border-0 flex-1" disabled={loading}>
+              {loading ? "Updating..." : "Update Campaign"}
             </Button>
           </div>
         </DialogContent>
