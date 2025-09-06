@@ -52,14 +52,14 @@ export default function Navbar({ user }: NavbarProps) {
               <span className="text-primary-foreground font-bold text-xl">V</span>
             </div>
             <div className="hidden sm:block">
-              <span className="text-xl font-bold text-gradient-primary">
+              <span className="text-xl font-bold text-foreground">
                 Viber Ads Manager
               </span>
               <div className="text-xs text-muted-foreground font-medium">
                 Myanmar Business Solutions
               </div>
             </div>
-            <span className="text-xl font-bold text-gradient-primary sm:hidden">
+            <span className="text-xl font-bold text-foreground sm:hidden">
               VAM
             </span>
           </Link>

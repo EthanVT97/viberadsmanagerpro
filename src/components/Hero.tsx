@@ -17,7 +17,7 @@ export default function Hero() {
       <div className="relative z-10 max-w-6xl mx-auto text-center animate-fade-in-scale">
         <div className="mb-12">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold mb-6 sm:mb-8 leading-tight">
-            <span className="text-gradient-hero">
+            <span className="text-foreground">
               Viber Ads Manager
             </span>
             <br />

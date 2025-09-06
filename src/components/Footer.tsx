@@ -14,7 +14,7 @@ export default function Footer() {
                 <span className="text-primary-foreground font-bold text-xl">V</span>
               </div>
               <div>
-                <span className="text-lg sm:text-xl font-bold text-gradient-primary block">
+                <span className="text-lg sm:text-xl font-bold text-foreground block">
                   Viber Ads Manager
                 </span>
                 <span className="text-xs text-muted-foreground font-medium">

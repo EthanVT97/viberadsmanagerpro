@@ -68,7 +68,7 @@ export default function FeaturesSection() {
       
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16 sm:mb-20 animate-fade-in-scale">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gradient-hero">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-foreground">
             Powerful Features for Myanmar Businesses
           </h2>
           <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">

@@ -133,7 +133,7 @@ export default function PricingSection({ packages }: PricingSectionProps) {
       
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="text-center mb-16 sm:mb-20 animate-fade-in-scale">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gradient-hero">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-foreground">
             Choose Your Viber Ads Package
           </h2>
           <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto px-4 leading-relaxed">
@@ -165,7 +165,7 @@ export default function PricingSection({ packages }: PricingSectionProps) {
                   {pkg.description}
                 </CardDescription>
                 <div className="text-center">
-                  <span className="text-3xl sm:text-4xl font-bold text-gradient-primary">
+                  <span className="text-3xl sm:text-4xl font-bold text-foreground">
                     €{pkg.price_euro / 100}
                   </span>
                   <span className="text-base sm:text-lg text-muted-foreground ml-2">/month</span>
