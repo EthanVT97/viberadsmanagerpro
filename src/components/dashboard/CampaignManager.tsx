@@ -64,8 +64,8 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
     });
   };
 
-  const handleCreateCampaign = () => {
-    if (!formData.name || !formData.budget) {
+  const handleCreateCampaign = async () => {
+    if (!formData.name || !formData.budget || !user) {
       toast({
         title: "Missing information",
         description: "Please fill in campaign name and budget.",
@@ -74,27 +74,38 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
       return;
     }
 
-    const newCampaign: Campaign = {
-      id: Date.now().toString(),
-      name: formData.name,
-      status: 'draft',
-      budget: parseInt(formData.budget),
-      impressions: 0,
-      clicks: 0,
-      conversions: 0,
-      targetAudience: formData.targetAudience,
-      description: formData.description,
-      createdAt: new Date().toISOString()
-    };
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .insert({
+          user_id: user.id,
+          name: formData.name,
+          status: 'draft',
+          budget_euro: parseInt(formData.budget) * 100, // Convert to cents
+          target_audience: formData.targetAudience,
+          description: formData.description
+        });
 
-    onCampaignsChange([...campaigns, newCampaign]);
-    resetForm();
-    setShowCreateDialog(false);
+      if (error) throw error;
 
-    toast({
-      title: "Campaign created!",
-      description: "Your new campaign has been created successfully.",
-    });
+      resetForm();
+      setShowCreateDialog(false);
+      onCampaignsChange();
+
+      toast({
+        title: "Campaign created!",
+        description: "Your new campaign has been created successfully.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error creating campaign",
+        description: error.message || "Failed to create campaign",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEditCampaign = async () => {

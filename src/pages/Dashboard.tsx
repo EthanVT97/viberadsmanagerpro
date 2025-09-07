@@ -428,10 +428,7 @@ export default function Dashboard() {
                 description: campaign.description || '',
                 createdAt: campaign.created_at
               }))}
-              onCampaignsChange={(updatedCampaigns) => {
-                // This will be handled by the real Supabase integration
-                fetchUserData();
-              }}
+              onCampaignsChange={fetchUserData}
             />
           </TabsContent>
 
