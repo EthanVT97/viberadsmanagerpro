@@ -32,6 +32,8 @@ import AnalyticsChart from "@/components/dashboard/AnalyticsChart";
 import CampaignManager from "@/components/dashboard/CampaignManager";
 import ProfileManager from "@/components/dashboard/ProfileManager";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
+import CampaignSettings from "@/components/dashboard/CampaignSettings";
+import DetailedAnalytics from "@/components/dashboard/DetailedAnalytics";
 
 interface Package {
   id: string;
@@ -339,10 +341,12 @@ export default function Dashboard() {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="detailed-analytics">Reports</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="packages">Packages</TabsTrigger>
           </TabsList>
@@ -401,11 +405,19 @@ export default function Dashboard() {
                     <Plus className="mr-2 h-4 w-4" />
                     Create New Campaign
                   </Button>
-                  <Button className="w-full justify-start" variant="outline">
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("detailed-analytics")}
+                  >
                     <BarChart3 className="mr-2 h-4 w-4" />
                     View Analytics
                   </Button>
-                  <Button className="w-full justify-start" variant="outline">
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={() => setActiveTab("settings")}
+                  >
                     <Settings className="mr-2 h-4 w-4" />
                     Campaign Settings
                   </Button>
@@ -447,6 +459,31 @@ export default function Dashboard() {
                 clicks: campaign.clicks || 0,
                 conversions: campaign.conversions || 0
               }))}
+            />
+          </TabsContent>
+
+          <TabsContent value="detailed-analytics" className="space-y-6">
+            <DetailedAnalytics 
+              campaigns={campaigns.map(campaign => ({
+                id: campaign.id,
+                name: campaign.name,
+                status: campaign.status as 'active' | 'paused' | 'draft',
+                budget: campaign.budget_euro / 100,
+                impressions: campaign.impressions || 0,
+                clicks: campaign.clicks || 0,
+                conversions: campaign.conversions || 0
+              }))}
+            />
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">Campaign Settings</h2>
+              <p className="text-muted-foreground">Configure and optimize your campaign settings</p>
+            </div>
+            <CampaignSettings 
+              campaigns={campaigns}
+              onCampaignsChange={fetchUserData}
             />
           </TabsContent>
 
