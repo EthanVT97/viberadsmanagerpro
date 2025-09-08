@@ -365,12 +365,22 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                      <Button
                        variant="outline"
                        size="sm"
-                       onClick={() => navigate(`/campaigns/${campaign.id}/create-ad`)}
+                      onClick={() => navigate(`/campaigns/${campaign.id}/ads/create`)}
                        className="flex-1 lg:flex-none"
                      >
                        <Plus className="mr-2 h-4 w-4" />
                        ကြော်ငြာထည့်မည်
                      </Button>
+                     
+                     <Button
+                       variant="outline"
+                       size="sm"
+                      onClick={() => navigate(`/campaigns/${campaign.id}`)}
+                      className="flex-1 lg:flex-none"
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      View Details
+                    </Button>
                      
                      <Button
                        variant="outline"

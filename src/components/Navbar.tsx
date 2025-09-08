@@ -12,6 +12,7 @@ import {
 import { User, LogOut, Settings, Menu, X, BarChart3 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import NotificationCenter from "@/components/NotificationCenter";
 
 interface NavbarProps {
   user: any;
@@ -101,6 +102,8 @@ export default function Navbar({ user }: NavbarProps) {
             </a>
             
             {user ? (
+              <div className="flex items-center gap-3">
+                <NotificationCenter />
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full hover-lift transition-elegant">
@@ -128,11 +131,11 @@ export default function Navbar({ user }: NavbarProps) {
                     <BarChart3 className="mr-3 h-4 w-4 text-primary" />
                     <span className="font-medium">Dashboard</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 transition-elegant">
+                  <DropdownMenuItem onClick={() => navigate("/profile")} className="cursor-pointer hover:bg-primary/10 transition-elegant">
                     <User className="mr-3 h-4 w-4 text-primary" />
                     <span className="font-medium">Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer hover:bg-primary/10 transition-elegant">
+                  <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer hover:bg-primary/10 transition-elegant">
                     <Settings className="mr-3 h-4 w-4 text-primary" />
                     <span className="font-medium">Settings</span>
                   </DropdownMenuItem>
@@ -143,8 +146,10 @@ export default function Navbar({ user }: NavbarProps) {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </div>
             ) : (
               <div className="flex items-center gap-4">
+                {user && <NotificationCenter />}
                 <Button variant="ghost" onClick={handleSignIn} className="font-medium hover-lift transition-elegant">
                   Sign In
                 </Button>

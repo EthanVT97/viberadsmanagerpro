@@ -334,6 +334,26 @@ export default function CampaignDetails() {
                         <span className="font-medium">Budget: €{ad.budget}</span>
                         <span className="text-muted-foreground capitalize">{ad.ad_type}</span>
                       </div>
+                      <div className="flex gap-2 mt-3">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/campaigns/${campaign.id}/ads/${ad.id}`)}
+                          className="flex-1"
+                        >
+                          <Eye className="h-3 w-3 mr-1" />
+                          View
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/campaigns/${campaign.id}/ads/${ad.id}`)}
+                          className="flex-1"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Edit
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
