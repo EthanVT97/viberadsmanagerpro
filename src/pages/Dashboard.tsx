@@ -34,6 +34,7 @@ import ProfileManager from "@/components/dashboard/ProfileManager";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import CampaignSettings from "@/components/dashboard/CampaignSettings";
 import DetailedAnalytics from "@/components/dashboard/DetailedAnalytics";
+import { useCampaignAnalytics } from "@/hooks/useCampaignAnalytics";
 
 interface Package {
   id: string;
@@ -70,6 +71,7 @@ export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { analytics: campaignAnalytics, loading: analyticsLoading, fetchAnalytics } = useCampaignAnalytics();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [packages, setPackages] = useState<Package[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);

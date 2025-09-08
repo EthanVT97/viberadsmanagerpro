@@ -160,6 +160,38 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
 
     const newStatus = campaign.status === 'active' ? 'paused' : 'active';
     
+    // Check if campaign has ads with content before activating
+    if (newStatus === 'active') {
+      const { data: adsData, error: adsError } = await supabase
+        .from('ads')
+        .select('id, image_url, video_url, headline, description')
+        .eq('campaign_id', campaignId)
+        .eq('user_id', user.id);
+
+      if (adsError || !adsData || adsData.length === 0) {
+        toast({
+          title: "စိတ်ပေါက်တဲ့ ကြော်ငြာမရှိပါ",
+          description: "ကမ်ပိန်းကို စတင်နိုင်ရန် ပုံ နှင့် အကြောင်းအရာ ပါဝင်သော ကြော်ငြာ ဖန်တီးပေးရပါမည်။",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check if ads have required content
+      const adsWithContent = adsData.filter(ad => 
+        (ad.image_url || ad.video_url) && ad.headline && ad.description
+      );
+
+      if (adsWithContent.length === 0) {
+        toast({
+          title: "ကြော်ငြာ အကြောင်းအရာ မပြည့်စုံပါ",
+          description: "ကမ်ပိန်းကို စတင်နိုင်ရန် ကြော်ငြာများတွင် ပုံ/ဗီဒီယို၊ ခေါင်းစဉ်နှင့် အကြောင်းအရာ ပြည့်စုံရပါမည်။",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
     setLoading(true);
     try {
       const { error } = await supabase
@@ -170,11 +202,22 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
 
       if (error) throw error;
 
+      // If activating campaign, start analytics tracking
+      if (newStatus === 'active') {
+        await supabase.functions.invoke('update-campaign-analytics', {
+          body: { campaignId, action: 'start' }
+        });
+      }
+
       onCampaignsChange();
 
       toast({
-        title: `Campaign ${newStatus === 'paused' ? 'paused' : 'activated'}`,
-        description: `${campaign.name} has been ${newStatus === 'paused' ? 'paused' : 'activated'}.`,
+        title: newStatus === 'paused' 
+          ? "ကမ်ပိန်းကို ရပ်တန့်လိုက်ပြီ" 
+          : "ကမ်ပိန်းကို စတင်လိုက်ပြီ",
+        description: newStatus === 'paused' 
+          ? `${campaign.name} ကို ရပ်တန့်လိုက်ပါပြီ။` 
+          : `${campaign.name} ကို စတင်လိုက်ပါပြီ။ Analytics များ တဖြည်းဖြည်း ပေါ်လာပါမည်။`,
       });
     } catch (error: any) {
       toast({
@@ -298,47 +341,58 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                     </div>
                   </div>
                   
-                  <div className="flex flex-row lg:flex-col gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => toggleCampaignStatus(campaign.id)}
-                      className="flex-1 lg:flex-none"
-                      disabled={loading}
-                    >
-                      {campaign.status === 'active' ? (
-                        <>
-                          <Pause className="mr-2 h-4 w-4" />
-                          Pause
-                        </>
-                      ) : (
-                        <>
-                          <Play className="mr-2 h-4 w-4" />
-                          Start
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openEditDialog(campaign)}
-                      className="flex-1 lg:flex-none"
-                      disabled={loading}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => deleteCampaign(campaign.id)}
-                      className="flex-1 lg:flex-none text-destructive hover:text-destructive"
-                      disabled={loading}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </Button>
-                  </div>
+                   <div className="flex flex-row lg:flex-col gap-2">
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={() => toggleCampaignStatus(campaign.id)}
+                       className="flex-1 lg:flex-none"
+                       disabled={loading}
+                     >
+                       {campaign.status === 'active' ? (
+                         <>
+                           <Pause className="mr-2 h-4 w-4" />
+                           ရပ်တန့်မည်
+                         </>
+                       ) : (
+                         <>
+                           <Play className="mr-2 h-4 w-4" />
+                           စတင်မည်
+                         </>
+                       )}
+                     </Button>
+                     
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={() => navigate(`/campaigns/${campaign.id}/create-ad`)}
+                       className="flex-1 lg:flex-none"
+                     >
+                       <Plus className="mr-2 h-4 w-4" />
+                       ကြော်ငြာထည့်မည်
+                     </Button>
+                     
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={() => openEditDialog(campaign)}
+                       className="flex-1 lg:flex-none"
+                       disabled={loading}
+                     >
+                       <Edit className="mr-2 h-4 w-4" />
+                       Edit
+                     </Button>
+                     <Button
+                       variant="outline"
+                       size="sm"
+                       onClick={() => deleteCampaign(campaign.id)}
+                       className="flex-1 lg:flex-none text-destructive hover:text-destructive"
+                       disabled={loading}
+                     >
+                       <Trash2 className="mr-2 h-4 w-4" />
+                       Delete
+                     </Button>
+                   </div>
                 </div>
               </CardContent>
             </Card>
