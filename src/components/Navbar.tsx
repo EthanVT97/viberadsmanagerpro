@@ -146,7 +146,6 @@ export default function Navbar({ user }: NavbarProps) {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              </div>
             ) : (
               <div className="flex items-center gap-4">
                 {user && <NotificationCenter />}
@@ -159,6 +158,8 @@ export default function Navbar({ user }: NavbarProps) {
               </div>
             )}
           </div>
+            )
+            }
 
           {/* Mobile menu button */}
           <div className="md:hidden">
