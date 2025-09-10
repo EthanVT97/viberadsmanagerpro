@@ -80,8 +80,8 @@ export default function CreateAd() {
     // Validation for required fields
     if (!formData.name) {
       toast({
-        title: "ကြော်ငြာအမည် လိုအပ်သည်",
-        description: "ကြော်ငြာအမည် ထည့်ပေးပါ။",
+        title: "Ad name required",
+        description: "Please enter an ad name.",
         variant: "destructive",
       });
       return;
@@ -89,8 +89,8 @@ export default function CreateAd() {
 
     if (!formData.headline) {
       toast({
-        title: "ခေါင်းစဉ် လိုအပ်သည်",
-        description: "ကြော်ငြာ ခေါင်းစဉ် ထည့်ပေးပါ။",
+        title: "Headline required",
+        description: "Please enter an ad headline.",
         variant: "destructive",
       });
       return;
@@ -98,8 +98,8 @@ export default function CreateAd() {
 
     if (!formData.about) {
       toast({
-        title: "အကြောင်းအရာ လိုအပ်သည်",
-        description: "ကြော်ငြာ အကြောင်းအရာ ထည့်ပေးပါ။",
+        title: "Description required",
+        description: "Please enter ad content.",
         variant: "destructive",
       });
       return;
@@ -107,8 +107,8 @@ export default function CreateAd() {
 
     if (!formData.image_url && !formData.video_url) {
       toast({
-        title: "မီဒီယာ လိုအပ်သည်",
-        description: "ကြော်ငြာတွင် ပုံ သို့မဟုတ် ဗီဒီယို တစ်ခု ပါဝင်ရမည်။",
+        title: "Media required",
+        description: "Please upload an image or video for your ad.",
         variant: "destructive",
       });
       return;
@@ -141,15 +141,15 @@ export default function CreateAd() {
       if (error) throw error;
 
       toast({
-        title: "ကြော်ငြာ အောင်မြင်စွာ ဖန်တီးပြီးပါပြီ!",
-        description: `ကြော်ငြာ "${formData.name}" ကို ${status === 'draft' ? 'မူကြမ်းအဖြစ် သိမ်းဆည်းပြီး' : 'ဖန်တီးပြီး စတင်လုပ်ဆောင်ပြီ'}ပါပြီ။`,
+        title: "Ad created successfully!",
+        description: `Ad "${formData.name}" has been ${status === 'draft' ? 'saved as draft' : 'created and activated'}.`,
       });
 
       navigate(`/campaigns/${campaign.id}`);
     } catch (error: any) {
       toast({
-        title: "ကြော်ငြာ ဖန်တီးရာတွင် အမှား",
-        description: error.message || "ကြော်ငြာ ဖန်တီးရာတွင် အမှားရှိပါသည်",
+        title: "Error creating ad",
+        description: error.message || "Failed to create ad",
         variant: "destructive",
       });
     } finally {
@@ -180,24 +180,22 @@ export default function CreateAd() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate(`/campaigns/${campaignId}`)}
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(`/campaigns/${campaign.id}`)}
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                ပြန်သွားမည်
+                Back to Campaign
               </Button>
-              <div>
-                <h1 className="text-xl font-semibold">ကြော်ငြာ အသစ် ဖန်တီးမည်</h1>
-                <p className="text-sm text-muted-foreground">
-                  ကမ်ပိန်း: {campaign?.name}
+              <div className="flex-1">
+                <h1 className="text-2xl font-bold">Create New Ad</h1>
+                <p className="text-muted-foreground">
+                  Campaign: {campaign.name}
                   {limits && (
                     <span className="block text-xs mt-1">
                       Package: {limits.package_name} (Up to {limits.ads_per_campaign_limit} ads per campaign)
@@ -215,7 +213,7 @@ export default function CreateAd() {
                 className="flex items-center gap-2"
               >
                 <Save className="h-4 w-4" />
-                မူကြမ်းသိမ်းမည်
+                Save Draft
               </Button>
               <Button
                 onClick={(e) => handleSubmit(e, 'active')}
@@ -223,7 +221,7 @@ export default function CreateAd() {
                 className="flex items-center gap-2 bg-gradient-primary text-primary-foreground border-0"
               >
                 <Eye className="h-4 w-4" />
-                ဖန်တီး၍ စတင်မည်
+                Create & Launch
               </Button>
             </div>
           </div>
@@ -278,37 +276,37 @@ export default function CreateAd() {
                       <SelectItem value="image">
                         <div className="flex items-center gap-2">
                           <Image className="h-4 w-4" />
-                          ပုံ ကြော်ငြာ
+                          Image Ad
                         </div>
                       </SelectItem>
                       <SelectItem value="video">
                         <div className="flex items-center gap-2">
                           <Video className="h-4 w-4" />
-                          ဗီဒီယို ကြော်ငြာ
+                          Video Ad
                         </div>
                       </SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground mt-1">
-                    ပုံ သို့မဟုတ် ဗီဒီယို ကြော်ငြာ ရွေးချယ်ပါ
+                    Choose between image or video advertisement
                   </p>
                 </div>
 
                 <div>
                   <Label htmlFor="headline" className="text-base font-medium">
-                    ကြော်ငြာ ခေါင်းစဉ် *
+                    Ad Headline *
                   </Label>
                   <Input
                     id="headline"
                     value={formData.headline}
                     onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
-                    placeholder="စွဲဆောင်မှုရှိသော ခေါင်းစဉ် ထည့်ပါ"
+                    placeholder="Enter compelling headline"
                     required
                     className="mt-1"
                     maxLength={60}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
-                    {formData.headline.length}/60 စာလုံး - စွဲဆောင်မှုရှိပြီး တိုတောင်းသော ခေါင်းစဉ်
+                    {formData.headline.length}/60 characters - Keep it engaging and concise
                   </p>
                 </div>
               </CardContent>
@@ -446,10 +444,10 @@ export default function CreateAd() {
                   ) : (
                     <Video className="h-5 w-5" />
                   )}
-                  {formData.ad_type === 'image' ? 'ပုံ တင်ခြင်း' : 'ဗီဒီယို တင်ခြင်း'} *
+                  {formData.ad_type === 'image' ? 'Image Upload' : 'Video Upload'} *
                 </CardTitle>
                 <CardDescription>
-                  သင်၏ ကြော်ငြာအတွက် {formData.ad_type === 'image' ? 'ပုံ' : 'ဗီဒီယို'} တင်ပါ
+                  Upload {formData.ad_type === 'image' ? 'an image' : 'a video'} for your ad
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -459,7 +457,7 @@ export default function CreateAd() {
                     acceptedTypes="image/*"
                     maxSize={5 * 1024 * 1024} // 5MB
                     bucket="campaign-images"
-                    label="ပုံ တင်မည်"
+                    label="Upload Image"
                     currentFile={formData.image_url}
                   />
                 ) : (
@@ -468,26 +466,26 @@ export default function CreateAd() {
                     acceptedTypes="video/*"
                     maxSize={50 * 1024 * 1024} // 50MB
                     bucket="campaign-videos"
-                    label="ဗီဒီယို တင်မည်"
+                    label="Upload Video"
                     currentFile={formData.video_url}
                   />
                 )}
                 <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                  <h4 className="font-medium text-sm mb-2">အကြံပြုချက်များ:</h4>
+                  <h4 className="font-medium text-sm mb-2">Recommendations:</h4>
                   <ul className="text-xs text-muted-foreground space-y-1">
                     {formData.ad_type === 'image' ? (
                       <>
-                        <li>• ပုံသည် ရှင်းလင်းပြီး အရည်အသွေးမြင့် ဖြစ်ရမည်</li>
-                        <li>• အနည်းဆုံး 1080x1080 pixels အရွယ်</li>
-                        <li>• JPG သို့မဟုတ် PNG ဖိုင်အမျိုးအစား</li>
-                        <li>• စာသားများ ရှင်းလင်းစွာ ဖတ်နိုင်ရမည်</li>
+                        <li>• Image should be clear and high quality</li>
+                        <li>• Minimum 1080x1080 pixels resolution</li>
+                        <li>• JPG or PNG file format</li>
+                        <li>• Text should be clearly readable</li>
                       </>
                     ) : (
                       <>
-                        <li>• ဗီဒီယို သည် 30 စက္ကန့်အောက် ဖြစ်သင့်သည်</li>
-                        <li>• အနည်းဆုံး 720p HD အရည်အသွေး</li>
-                        <li>• MP4 ဖိုင်အမျိုးအစား အကောင်းဆုံး</li>
-                        <li>• အစပိုင်း 3 စက္ကန့်တွင် အာရုံစိုက်စေရမည်</li>
+                        <li>• Video should be under 30 seconds</li>
+                        <li>• Minimum 720p HD quality</li>
+                        <li>• MP4 format works best</li>
+                        <li>• First 3 seconds should grab attention</li>
                       </>
                     )}
                   </ul>

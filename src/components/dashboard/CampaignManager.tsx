@@ -183,8 +183,8 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
 
       if (adsError || !adsData || adsData.length === 0) {
         toast({
-          title: "စိတ်ပေါက်တဲ့ ကြော်ငြာမရှိပါ",
-          description: "ကမ်ပိန်းကို စတင်နိုင်ရန် ပုံ နှင့် အကြောင်းအရာ ပါဝင်သော ကြော်ငြာ ဖန်တီးပေးရပါမည်။",
+          title: "No ads found",
+          description: "Please create ads with images and content before activating the campaign.",
           variant: "destructive",
         });
         return;
@@ -197,8 +197,8 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
 
       if (adsWithContent.length === 0) {
         toast({
-          title: "ကြော်ငြာ အကြောင်းအရာ မပြည့်စုံပါ",
-          description: "ကမ်ပိန်းကို စတင်နိုင်ရန် ကြော်ငြာများတွင် ပုံ/ဗီဒီယို၊ ခေါင်းစဉ်နှင့် အကြောင်းအရာ ပြည့်စုံရပါမည်။",
+          title: "Incomplete ad content",
+          description: "Ads must have images/videos, headlines, and descriptions before campaign activation.",
           variant: "destructive",
         });
         return;
@@ -226,11 +226,11 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
 
       toast({
         title: newStatus === 'paused' 
-          ? "ကမ်ပိန်းကို ရပ်တန့်လိုက်ပြီ" 
-          : "ကမ်ပိန်းကို စတင်လိုက်ပြီ",
+          ? "Campaign paused" 
+          : "Campaign activated",
         description: newStatus === 'paused' 
-          ? `${campaign.name} ကို ရပ်တန့်လိုက်ပါပြီ။` 
-          : `${campaign.name} ကို စတင်လိုက်ပါပြီ။ Analytics များ တဖြည်းဖြည်း ပေါ်လာပါမည်။`,
+          ? `${campaign.name} has been paused.` 
+          : `${campaign.name} is now active. Analytics will update gradually.`,
       });
     } catch (error: any) {
       toast({
@@ -380,12 +380,12 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                        {campaign.status === 'active' ? (
                          <>
                            <Pause className="mr-2 h-4 w-4" />
-                           ရပ်တန့်မည်
+                           Pause
                          </>
                        ) : (
                          <>
                            <Play className="mr-2 h-4 w-4" />
-                           စတင်မည်
+                           Start
                          </>
                        )}
                      </Button>
@@ -397,7 +397,7 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                        className="flex-1 lg:flex-none"
                      >
                        <Plus className="mr-2 h-4 w-4" />
-                       ကြော်ငြာထည့်မည်
+                       Add Ad
                      </Button>
                      
                      <Button

@@ -65,10 +65,15 @@ export default function Index() {
         .order('price_euro', { ascending: true });
 
       if (error) {
+        console.error('Error fetching packages:', error);
+        // Use default packages on error
+        setPackages(defaultPackages);
       } else {
         setPackages(data || []);
       }
     } catch (error) {
+      console.error('Error in fetchPackages:', error);
+      setPackages(defaultPackages);
     } finally {
       setLoading(false);
     }
