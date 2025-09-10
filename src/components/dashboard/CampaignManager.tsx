@@ -22,6 +22,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { usePackageLimits } from "@/hooks/usePackageLimits";
 
 interface Campaign {
   id: string;
@@ -44,6 +45,7 @@ interface CampaignManagerProps {
 export default function CampaignManager({ campaigns, onCampaignsChange }: CampaignManagerProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { canCreateCampaign, limits, usage, isAtLimit } = usePackageLimits();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(false);
@@ -69,6 +71,17 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
       toast({
         title: "Missing information",
         description: "Please fill in campaign name and budget.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if user can create new campaign
+    const canCreate = await canCreateCampaign();
+    if (!canCreate) {
+      toast({
+        title: "Campaign limit reached",
+        description: `You've reached your package limit of ${limits?.campaign_limit || 1} campaigns. Please upgrade your package to create more campaigns.`,
         variant: "destructive",
       });
       return;
@@ -283,15 +296,30 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold">Campaigns</h2>
-          <p className="text-sm sm:text-base text-muted-foreground">Manage your Viber advertising campaigns</p>
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Manage your Viber advertising campaigns
+            {limits && (
+              <span className="ml-2 text-xs">
+                ({campaigns.length}/{limits.campaign_limit} campaigns used)
+              </span>
+            )}
+          </p>
         </div>
-        <Button 
-          className="bg-gradient-primary text-primary-foreground border-0 w-full sm:w-auto"
-          onClick={() => setShowCreateDialog(true)}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          New Campaign
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button 
+            className="bg-gradient-primary text-primary-foreground border-0 w-full sm:w-auto"
+            onClick={() => setShowCreateDialog(true)}
+            disabled={limits && isAtLimit(campaigns.length, limits.campaign_limit)}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            New Campaign
+          </Button>
+          {limits && isAtLimit(campaigns.length, limits.campaign_limit) && (
+            <p className="text-xs text-red-600 text-center">
+              Campaign limit reached
+            </p>
+          )}
+        </div>
       </div>
 
       {campaigns.length > 0 ? (
@@ -417,13 +445,21 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
               <p className="text-muted-foreground mb-4">
                 Create your first campaign to start advertising on Viber
               </p>
-              <Button 
-                className="bg-gradient-primary text-primary-foreground border-0"
-                onClick={() => setShowCreateDialog(true)}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Create Campaign
-              </Button>
+              <div className="space-y-2">
+                <Button 
+                  className="bg-gradient-primary text-primary-foreground border-0"
+                  onClick={() => setShowCreateDialog(true)}
+                  disabled={limits && isAtLimit(0, limits.campaign_limit)}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Campaign
+                </Button>
+                {limits && (
+                  <p className="text-xs text-muted-foreground">
+                    Package: {limits.package_name} (Up to {limits.campaign_limit} campaigns)
+                  </p>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

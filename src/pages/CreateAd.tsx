@@ -10,6 +10,7 @@ import { ArrowLeft, Save, Eye, Upload, Image, Video } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { usePackageLimits } from "@/hooks/usePackageLimits";
 import FileUpload from "@/components/FileUpload";
 
 interface Campaign {
@@ -21,6 +22,7 @@ interface Campaign {
 export default function CreateAd() {
   const { campaignId } = useParams<{ campaignId: string }>();
   const { user } = useAuth();
+  const { canCreateAd, limits } = usePackageLimits();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
@@ -63,6 +65,17 @@ export default function CreateAd() {
   const handleSubmit = async (e: React.FormEvent, status: 'draft' | 'active') => {
     e.preventDefault();
     if (!user || !campaign) return;
+
+    // Check if user can create new ad in this campaign
+    const canCreate = await canCreateAd(campaign.id);
+    if (!canCreate) {
+      toast({
+        title: "Ad limit reached",
+        description: `You've reached the limit of ${limits?.ads_per_campaign_limit || 3} ads per campaign for your package. Please upgrade to create more ads.`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     // Validation for required fields
     if (!formData.name) {
@@ -185,6 +198,11 @@ export default function CreateAd() {
                 <h1 className="text-xl font-semibold">ကြော်ငြာ အသစ် ဖန်တီးမည်</h1>
                 <p className="text-sm text-muted-foreground">
                   ကမ်ပိန်း: {campaign?.name}
+                  {limits && (
+                    <span className="block text-xs mt-1">
+                      Package: {limits.package_name} (Up to {limits.ads_per_campaign_limit} ads per campaign)
+                    </span>
+                  )}
                 </p>
               </div>
             </div>

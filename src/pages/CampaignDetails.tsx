@@ -19,6 +19,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { usePackageLimits } from "@/hooks/usePackageLimits";
 
 interface Campaign {
   id: string;
@@ -54,6 +55,7 @@ export default function CampaignDetails() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { canCreateAd, limits } = usePackageLimits();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
@@ -208,6 +210,7 @@ export default function CampaignDetails() {
               <Button
                 onClick={() => navigate(`/campaigns/${campaign.id}/ads/create`)}
                 className="bg-gradient-primary text-primary-foreground border-0"
+                disabled={!limits}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Ad
@@ -276,15 +279,40 @@ export default function CampaignDetails() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold">Campaign Ads</h2>
-                <p className="text-muted-foreground">Manage your campaign advertisements</p>
+                <p className="text-muted-foreground">
+                  Manage your campaign advertisements
+                  {limits && (
+                    <span className="block text-xs mt-1">
+                      Package allows up to {limits.ads_per_campaign_limit} ads per campaign
+                    </span>
+                  )}
+                </p>
               </div>
-              <Button 
-                onClick={() => navigate(`/campaigns/${campaign.id}/ads/create`)}
-                className="bg-gradient-primary text-primary-foreground border-0"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create New Ad
-              </Button>
+              <div className="space-y-2">
+                <Button 
+                  onClick={async () => {
+                    const canCreate = await canCreateAd(campaign.id);
+                    if (canCreate) {
+                      navigate(`/campaigns/${campaign.id}/ads/create`);
+                    } else {
+                      toast({
+                        title: "Ad limit reached",
+                        description: `You've reached the limit of ${limits?.ads_per_campaign_limit || 3} ads per campaign. Please upgrade your package to create more ads.`,
+                        variant: "destructive",
+                      });
+                    }
+                  }}
+                  className="bg-gradient-primary text-primary-foreground border-0"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Ad
+                </Button>
+                {limits && ads.length >= limits.ads_per_campaign_limit && (
+                  <p className="text-xs text-red-600 text-center">
+                    Ad limit reached for this campaign
+                  </p>
+                )}
+              </div>
             </div>
 
             {ads.length === 0 ? (
@@ -296,13 +324,31 @@ export default function CampaignDetails() {
                     <p className="text-muted-foreground mb-4">
                       Create your first ad to start reaching Myanmar users on Viber
                     </p>
-                    <Button 
-                      onClick={() => navigate(`/campaigns/${campaign.id}/ads/create`)}
-                      className="bg-gradient-primary text-primary-foreground border-0"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Create First Ad
-                    </Button>
+                    <div className="space-y-2">
+                      <Button 
+                        onClick={async () => {
+                          const canCreate = await canCreateAd(campaign.id);
+                          if (canCreate) {
+                            navigate(`/campaigns/${campaign.id}/ads/create`);
+                          } else {
+                            toast({
+                              title: "Ad limit reached",
+                              description: `You've reached the limit of ${limits?.ads_per_campaign_limit || 3} ads per campaign.`,
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                        className="bg-gradient-primary text-primary-foreground border-0"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create First Ad
+                      </Button>
+                      {limits && (
+                        <p className="text-xs text-muted-foreground text-center">
+                          Your package allows up to {limits.ads_per_campaign_limit} ads per campaign
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>

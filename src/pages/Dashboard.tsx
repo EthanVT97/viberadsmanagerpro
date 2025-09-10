@@ -34,7 +34,9 @@ import ProfileManager from "@/components/dashboard/ProfileManager";
 import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import CampaignSettings from "@/components/dashboard/CampaignSettings";
 import DetailedAnalytics from "@/components/dashboard/DetailedAnalytics";
+import PackageLimitsCard from "@/components/dashboard/PackageLimitsCard";
 import { useCampaignAnalytics } from "@/hooks/useCampaignAnalytics";
+import { usePackageLimits } from "@/hooks/usePackageLimits";
 
 interface Package {
   id: string;
@@ -72,6 +74,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { analytics: campaignAnalytics, loading: analyticsLoading, fetchAnalytics } = useCampaignAnalytics();
+  const { canCreateCampaign } = usePackageLimits();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [packages, setPackages] = useState<Package[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -355,6 +358,9 @@ export default function Dashboard() {
 
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Package Limits Card */}
+              <PackageLimitsCard onUpgradeClick={() => setActiveTab("packages")} />
+
               {/* Current Subscription */}
               <Card>
                 <CardHeader>
@@ -399,14 +405,27 @@ export default function Dashboard() {
                   <CardDescription>Manage your advertising</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button 
-                    onClick={() => navigate("/campaigns/create")}
-                    className="w-full justify-start" 
-                    variant="outline"
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create New Campaign
-                  </Button>
+                  <div className="space-y-2">
+                    <Button 
+                      onClick={async () => {
+                        const canCreate = await canCreateCampaign();
+                        if (canCreate) {
+                          navigate("/campaigns/create");
+                        } else {
+                          toast({
+                            title: "Campaign limit reached",
+                            description: "Please upgrade your package to create more campaigns.",
+                            variant: "destructive",
+                          });
+                        }
+                      }}
+                      className="w-full justify-start" 
+                      variant="outline"
+                    >
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create New Campaign
+                    </Button>
+                  </div>
                   <Button 
                     className="w-full justify-start" 
                     variant="outline"
