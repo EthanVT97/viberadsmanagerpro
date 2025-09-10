@@ -597,10 +597,10 @@ export default function AdDetails() {
             <Button 
               onClick={handleUpdateAd} 
               className="bg-gradient-primary text-primary-foreground border-0 flex-1"
-              disabled={loading}
+              disabled={updateLoading}
             >
               <Save className="mr-2 h-4 w-4" />
-              {loading ? "Saving..." : "Save Changes"}
+              {updateLoading ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </DialogContent>

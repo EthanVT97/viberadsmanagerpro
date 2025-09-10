@@ -58,6 +58,11 @@ export default function CreateAd() {
       setCampaign(data);
     } catch (error) {
       console.error('Error fetching campaign:', error);
+      toast({
+        title: "Campaign not found",
+        description: "The campaign you're trying to create an ad for was not found.",
+        variant: "destructive",
+      });
       navigate("/dashboard");
     }
   };

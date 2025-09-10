@@ -90,11 +90,16 @@ export default function FileUpload({
     try {
       // Extract file path from URL
       const url = new URL(preview);
-      const path = url.pathname.split('/').slice(-2).join('/'); // Get user_id/filename
+      const pathParts = url.pathname.split('/');
+      const path = pathParts.slice(-2).join('/'); // Get user_id/filename
 
-      await supabase.storage
+      const { error } = await supabase.storage
         .from(bucket)
         .remove([path]);
+
+      if (error) {
+        console.error('Error removing file:', error);
+      }
 
       setPreview(null);
       onUpload('');

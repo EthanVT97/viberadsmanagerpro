@@ -64,7 +64,7 @@ export default function PricingSection({ packages }: PricingSectionProps) {
     if (!user) {
       toast({
         title: "Authentication Required",
-        description: "Please sign in to select a package",
+        description: "Please sign in to select a package.",
       });
       navigate('/auth');
       return;
@@ -85,7 +85,7 @@ export default function PricingSection({ packages }: PricingSectionProps) {
       if (existingSubscription) {
         toast({
           title: "Subscription Exists",
-          description: "You already have an active subscription. Please go to your dashboard to manage it.",
+          description: "You already have an active subscription. Go to your dashboard to manage it.",
         });
         navigate('/dashboard');
         return;

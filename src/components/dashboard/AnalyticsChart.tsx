@@ -43,11 +43,11 @@ export default function AnalyticsChart({ campaigns }: AnalyticsChartProps) {
   const timeSeriesData = generateTimeSeriesData();
 
   const campaignPerformanceData = campaigns.map(campaign => ({
-    name: campaign.name.length > 15 ? campaign.name.substring(0, 15) + '...' : campaign.name,
+    name: campaign.name.length > 12 ? campaign.name.substring(0, 12) + '...' : campaign.name,
     impressions: campaign.impressions,
     clicks: campaign.clicks,
     conversions: campaign.conversions,
-    ctr: campaign.impressions > 0 ? ((campaign.clicks / campaign.impressions) * 100).toFixed(2) : '0'
+    ctr: campaign.impressions > 0 ? parseFloat(((campaign.clicks / campaign.impressions) * 100).toFixed(2)) : 0
   }));
 
   const chartConfig = {

@@ -152,7 +152,7 @@ export function useNotifications() {
     if (!user) return;
 
     try {
-      await supabase.functions.invoke('send-notification', {
+      const { error } = await supabase.functions.invoke('send-notification', {
         body: {
           userId: user.id,
           type,
@@ -161,6 +161,10 @@ export function useNotifications() {
           data
         }
       });
+      
+      if (error) {
+        console.error('Error sending notification:', error);
+      }
     } catch (error) {
       console.error('Error sending notification:', error);
     }

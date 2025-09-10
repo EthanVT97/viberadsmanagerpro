@@ -146,21 +146,22 @@ export default function Settings() {
 
     setLoading(true);
     try {
-      // Delete user data (cascading deletes will handle related records)
-      const { error } = await supabase.auth.admin.deleteUser(user.id);
+      // Note: In a real application, you would need proper admin access
+      // For now, we'll just sign out the user
+      const { error } = await supabase.auth.signOut();
       
       if (error) throw error;
 
       toast({
-        title: "Account deleted",
-        description: "Your account has been permanently deleted.",
+        title: "Signed out",
+        description: "You have been signed out. Contact support for account deletion.",
       });
 
       navigate("/");
     } catch (error: any) {
       toast({
-        title: "Error deleting account",
-        description: error.message || "Failed to delete account",
+        title: "Error signing out",
+        description: error.message || "Failed to sign out",
         variant: "destructive",
       });
     } finally {

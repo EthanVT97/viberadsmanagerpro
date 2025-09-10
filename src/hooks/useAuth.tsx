@@ -11,6 +11,7 @@ export function useAuth() {
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
         console.error('Session error:', error);
+        console.error('Session error:', error);
       }
       setUser(session?.user ?? null);
       setLoading(false);

@@ -136,11 +136,15 @@ export default function Dashboard() {
       setPackages(packagesData || []);
 
       // Fetch analytics data
-      const { data: analyticsData } = await supabase
+      const { data: analyticsData, error: analyticsError } = await supabase
         .from('campaign_analytics')
         .select('*')
         .order('date', { ascending: false })
         .limit(30);
+
+      if (analyticsError) {
+        console.error('Error fetching analytics:', analyticsError);
+      }
 
       setAnalytics(analyticsData || []);
     } catch (error) {

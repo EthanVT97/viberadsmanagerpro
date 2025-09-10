@@ -226,8 +226,9 @@ export default function CampaignSettings({ campaigns, onCampaignsChange }: Campa
                 Back to Campaigns
               </Button>
               <Button onClick={handleSaveSettings} disabled={loading}>
+              <Button onClick={handleSaveSettings} disabled={saveLoading}>
                 <Save className="mr-2 h-4 w-4" />
-                {loading ? "Saving..." : "Save Settings"}
+                {saveLoading ? "Saving..." : "Save Settings"}
               </Button>
             </div>
           </div>

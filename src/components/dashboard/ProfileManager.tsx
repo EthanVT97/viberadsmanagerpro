@@ -38,6 +38,14 @@ export default function ProfileManager({ profile, user, onProfileUpdate }: Profi
   const handleUpdateProfile = async () => {
     if (!user) return;
 
+    if (!formData.business_name.trim()) {
+      toast({
+        title: "Business name required",
+        description: "Please enter your business name.",
+        variant: "destructive",
+      });
+      return;
+    }
     setLoading(true);
     try {
       const { data, error } = await supabase

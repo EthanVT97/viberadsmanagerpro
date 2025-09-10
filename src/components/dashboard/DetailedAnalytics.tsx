@@ -347,7 +347,7 @@ export default function DetailedAnalytics({ campaigns }: DetailedAnalyticsProps)
                 <ChartContainer config={chartConfig} className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={campaigns.map(campaign => ({
-                      name: campaign.name.length > 15 ? campaign.name.substring(0, 15) + '...' : campaign.name,
+                      name: campaign.name.length > 12 ? campaign.name.substring(0, 12) + '...' : campaign.name,
                       impressions: campaign.impressions,
                       clicks: campaign.clicks,
                       conversions: campaign.conversions

@@ -91,7 +91,7 @@ export default function SubscriptionManager({
     if (activeSubscription) {
       toast({
         title: "Subscription exists",
-        description: "You already have an active subscription. Please cancel it first to change packages.",
+        description: "You already have an active subscription. Cancel it first to change packages.",
         variant: "destructive",
       });
       return;

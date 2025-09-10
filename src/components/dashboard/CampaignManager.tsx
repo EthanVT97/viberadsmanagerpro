@@ -217,9 +217,13 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
 
       // If activating campaign, start analytics tracking
       if (newStatus === 'active') {
-        await supabase.functions.invoke('update-campaign-analytics', {
+        const { error: analyticsError } = await supabase.functions.invoke('update-campaign-analytics', {
           body: { campaignId, action: 'start' }
         });
+        
+        if (analyticsError) {
+          console.error('Error starting analytics:', analyticsError);
+        }
       }
 
       onCampaignsChange();
