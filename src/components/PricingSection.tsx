@@ -26,28 +26,28 @@ const defaultPackages: Package[] = [
     name: 'Business Exclusive',
     description: 'Rakuten Viber - Mobile Application - IOS and ANDROID',
     price_euro: 15000,
-    features: ['Up to 5 campaigns', 'Up to 50,000 monthly impressions', '10 ads per campaign', 'Exclusive business targeting', 'Premium ad placement', 'Myanmar market focus', 'iOS & Android reach']
+    features: ['Unlimited campaigns', 'Unlimited monthly impressions', 'Unlimited ads per campaign', 'Exclusive business targeting', 'Premium ad placement', 'Myanmar market focus', 'iOS & Android reach']
   },
   {
     id: '2',
     name: 'Display Reach',
     description: 'Rakuten Viber - Mobile Application - IOS and ANDROID',
     price_euro: 15000,
-    features: ['Up to 3 campaigns', 'Up to 30,000 monthly impressions', '5 ads per campaign', 'Display advertising', 'Wide audience reach', 'Myanmar market focus', 'iOS & Android reach']
+    features: ['Unlimited campaigns', 'Unlimited monthly impressions', 'Unlimited ads per campaign', 'Display advertising', 'Wide audience reach', 'Myanmar market focus', 'iOS & Android reach']
   },
   {
     id: '3',
     name: 'Daily Essentials',
     description: 'Rakuten Viber - Mobile Application - IOS and ANDROID',
     price_euro: 15000,
-    features: ['Up to 2 campaigns', 'Up to 15,000 monthly impressions', '3 ads per campaign', 'Daily engagement ads', 'Essential features', 'Myanmar market focus', 'iOS & Android reach']
+    features: ['Unlimited campaigns', 'Unlimited monthly impressions', 'Unlimited ads per campaign', 'Daily engagement ads', 'Essential features', 'Myanmar market focus', 'iOS & Android reach']
   },
   {
     id: '4',
     name: 'Video Pulse',
     description: 'Rakuten Viber - Mobile Application - IOS and ANDROID',
     price_euro: 20000,
-    features: ['Up to 10 campaigns', 'Up to 100,000 monthly impressions', '15 ads per campaign', 'Video advertising', 'High engagement', 'Myanmar market focus', 'iOS & Android reach']
+    features: ['Unlimited campaigns', 'Unlimited monthly impressions', 'Unlimited ads per campaign', 'Video advertising', 'High engagement', 'Myanmar market focus', 'iOS & Android reach']
   }
 ];
 

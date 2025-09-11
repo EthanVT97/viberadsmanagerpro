@@ -60,62 +60,30 @@ export default function PackageLimitsCard({ onUpgradeClick }: PackageLimitsCardP
         <CardDescription>Your current package usage and limits</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Campaign Usage */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Campaigns</span>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {usage.current_campaigns} / {limits.campaign_limit}
-            </span>
+        {/* Unlimited Package Benefits */}
+        <div className="space-y-4">
+          <div className="text-center p-6 bg-gradient-primary/10 rounded-lg border border-primary/20">
+            <Crown className="h-8 w-8 text-primary mx-auto mb-2" />
+            <h3 className="font-semibold text-primary mb-1">Unlimited Access</h3>
+            <p className="text-sm text-muted-foreground">All features unlocked with no restrictions</p>
           </div>
-          <Progress 
-            value={campaignUsagePercent} 
-            className={`h-2 ${isAtLimit(usage.current_campaigns, limits.campaign_limit) ? 'bg-red-100' : isNearLimit(usage.current_campaigns, limits.campaign_limit) ? 'bg-yellow-100' : ''}`}
-          />
-          {isAtLimit(usage.current_campaigns, limits.campaign_limit) && (
-            <div className="flex items-center gap-2 text-red-600 text-xs">
-              <AlertTriangle className="h-3 w-3" />
-              <span>Campaign limit reached</span>
+          
+          <div className="grid grid-cols-3 gap-2 text-xs">
+            <div className="text-center p-3 bg-green-50 rounded border border-green-200">
+              <BarChart3 className="h-4 w-4 mx-auto mb-1 text-green-600" />
+              <div className="font-medium text-green-800">∞</div>
+              <div className="text-green-600">Campaigns</div>
             </div>
-          )}
-        </div>
-
-        {/* Monthly Impressions Usage */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Eye className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Monthly Impressions</span>
+            <div className="text-center p-3 bg-blue-50 rounded border border-blue-200">
+              <Eye className="h-4 w-4 mx-auto mb-1 text-blue-600" />
+              <div className="font-medium text-blue-800">∞</div>
+              <div className="text-blue-600">Impressions</div>
             </div>
-            <span className="text-sm text-muted-foreground">
-              {usage.current_monthly_impressions.toLocaleString()} / {limits.monthly_impressions_limit.toLocaleString()}
-            </span>
-          </div>
-          <Progress 
-            value={impressionsUsagePercent} 
-            className={`h-2 ${isAtLimit(usage.current_monthly_impressions, limits.monthly_impressions_limit) ? 'bg-red-100' : isNearLimit(usage.current_monthly_impressions, limits.monthly_impressions_limit) ? 'bg-yellow-100' : ''}`}
-          />
-          {isNearLimit(usage.current_monthly_impressions, limits.monthly_impressions_limit) && (
-            <div className="flex items-center gap-2 text-amber-600 text-xs">
-              <AlertTriangle className="h-3 w-3" />
-              <span>Approaching monthly limit</span>
+            <div className="text-center p-3 bg-purple-50 rounded border border-purple-200">
+              <Target className="h-4 w-4 mx-auto mb-1 text-purple-600" />
+              <div className="font-medium text-purple-800">∞</div>
+              <div className="text-purple-600">Ads</div>
             </div>
-          )}
-        </div>
-
-        {/* Ads Per Campaign Limit */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Ads per Campaign</span>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              Up to {limits.ads_per_campaign_limit} ads
-            </span>
           </div>
         </div>
 

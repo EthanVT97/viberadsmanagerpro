@@ -77,15 +77,8 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
     }
 
     // Check if user can create new campaign
-    const canCreate = await canCreateCampaign();
-    if (!canCreate) {
-      toast({
-        title: "Campaign limit reached",
-        description: `You've reached your package limit of ${limits?.campaign_limit || 1} campaigns. Please upgrade your package to create more campaigns.`,
-        variant: "destructive",
-      });
-      return;
-    }
+    // Always allow campaign creation for unlimited packages
+    const canCreate = true;
 
     setLoading(true);
     try {
@@ -298,27 +291,16 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
           <h2 className="text-xl sm:text-2xl font-bold">Campaigns</h2>
           <p className="text-sm sm:text-base text-muted-foreground">
             Manage your Viber advertising campaigns
-            {limits && (
-              <span className="ml-2 text-xs">
-                ({campaigns.length}/{limits.campaign_limit} campaigns used)
-              </span>
-            )}
           </p>
         </div>
         <div className="flex flex-col gap-2">
           <Button 
             className="bg-gradient-primary text-primary-foreground border-0 w-full sm:w-auto"
             onClick={() => setShowCreateDialog(true)}
-            disabled={limits && isAtLimit(campaigns.length, limits.campaign_limit)}
           >
             <Plus className="mr-2 h-4 w-4" />
             New Campaign
           </Button>
-          {limits && isAtLimit(campaigns.length, limits.campaign_limit) && (
-            <p className="text-xs text-red-600 text-center">
-              Campaign limit reached
-            </p>
-          )}
         </div>
       </div>
 
@@ -449,16 +431,10 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                 <Button 
                   className="bg-gradient-primary text-primary-foreground border-0"
                   onClick={() => setShowCreateDialog(true)}
-                  disabled={limits && isAtLimit(0, limits.campaign_limit)}
                 >
                   <Plus className="mr-2 h-4 w-4" />
                   Create Campaign
                 </Button>
-                {limits && (
-                  <p className="text-xs text-muted-foreground">
-                    Package: {limits.package_name} (Up to {limits.campaign_limit} campaigns)
-                  </p>
-                )}
               </div>
             </div>
           </CardContent>

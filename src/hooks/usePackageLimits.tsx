@@ -100,49 +100,28 @@ export function usePackageLimits() {
   };
 
   const canCreateCampaign = async (): Promise<boolean> => {
-    if (!user) return false;
-
-    try {
-      const { data, error } = await supabase
-        .rpc('can_user_create_campaign', { user_uuid: user.id });
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error checking campaign creation permission:', error);
-      return false;
-    }
+    // Always return true for unlimited access
+    return true;
   };
 
   const canCreateAd = async (campaignId: string): Promise<boolean> => {
-    if (!user) return false;
-
-    try {
-      const { data, error } = await supabase
-        .rpc('can_user_create_ad', { 
-          user_uuid: user.id, 
-          campaign_uuid: campaignId 
-        });
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error checking ad creation permission:', error);
-      return false;
-    }
+    // Always return true for unlimited access
+    return true;
   };
 
   const getUsagePercentage = (current: number, limit: number): number => {
-    if (limit === 0) return 0;
-    return Math.min((current / limit) * 100, 100);
+    // Always return 0% for unlimited packages
+    return 0;
   };
 
   const isNearLimit = (current: number, limit: number, threshold: number = 80): boolean => {
-    return getUsagePercentage(current, limit) >= threshold;
+    // Never near limit for unlimited packages
+    return false;
   };
 
   const isAtLimit = (current: number, limit: number): boolean => {
-    return current >= limit;
+    // Never at limit for unlimited packages
+    return false;
   };
 
   return {
