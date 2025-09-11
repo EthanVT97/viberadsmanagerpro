@@ -100,27 +100,27 @@ export function usePackageLimits() {
   };
 
   const canCreateCampaign = async (): Promise<boolean> => {
-    // Always return true for unlimited access
+    // All users can create unlimited campaigns
     return true;
   };
 
   const canCreateAd = async (campaignId: string): Promise<boolean> => {
-    // Always return true for unlimited access
+    // All users can create unlimited ads
     return true;
   };
 
   const getUsagePercentage = (current: number, limit: number): number => {
-    // Always return 0% for unlimited packages
+    // Always return 0% since all packages are unlimited
     return 0;
   };
 
   const isNearLimit = (current: number, limit: number, threshold: number = 80): boolean => {
-    // Never near limit for unlimited packages
+    // Never near limit since all packages are unlimited
     return false;
   };
 
   const isAtLimit = (current: number, limit: number): boolean => {
-    // Never at limit for unlimited packages
+    // Never at limit since all packages are unlimited
     return false;
   };
 

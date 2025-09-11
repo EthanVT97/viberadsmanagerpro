@@ -88,13 +88,27 @@ export default function SubscriptionManager({
       return;
     }
 
+    // Allow users to have multiple subscriptions or switch packages
     if (activeSubscription) {
-      toast({
-        title: "Subscription exists",
-        description: "You already have an active subscription. Cancel it first to change packages.",
-        variant: "destructive",
-      });
-      return;
+      // Cancel existing subscription first
+      try {
+        const { error: cancelError } = await supabase
+          .from('subscriptions')
+          .update({ 
+            status: 'cancelled',
+            end_date: new Date().toISOString()
+          })
+          .eq('id', activeSubscription.id);
+
+        if (cancelError) throw cancelError;
+      } catch (error: any) {
+        toast({
+          title: "Error switching packages",
+          description: error.message || "Failed to cancel existing subscription.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setLoading(true);
@@ -110,8 +124,10 @@ export default function SubscriptionManager({
       if (error) throw error;
 
       toast({
-        title: "Subscription activated!",
-        description: "Your package has been activated successfully.",
+        title: activeSubscription ? "Package switched!" : "Subscription activated!",
+        description: activeSubscription 
+          ? "Your package has been switched successfully." 
+          : "Your package has been activated successfully.",
       });
 
       onSubscriptionChange();
@@ -181,9 +197,16 @@ export default function SubscriptionManager({
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-base sm:text-lg">{activeSubscription.packages.name}</h3>
-                <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
-                  Active
-                </Badge>
+                <div className="flex gap-2">
+                  <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100">
+                    Active
+                  </Badge>
+                  {activeSubscription.packages.name === 'Video Pulse' && (
+                    <Badge className="bg-gradient-primary text-primary-foreground border-0">
+                      Premium
+                    </Badge>
+                  )}
+                </div>
               </div>
               <p className="text-sm text-muted-foreground mb-4">
                 {activeSubscription.packages.description}
@@ -217,21 +240,21 @@ export default function SubscriptionManager({
 
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" disabled={loading}>
-                    Cancel Subscription
+                  <Button variant="outline" disabled={loading}>
+                    Switch Package
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Cancel Subscription</AlertDialogTitle>
+                    <AlertDialogTitle>Switch Package</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to cancel your subscription? This action cannot be undone and you will lose access to all premium features.
+                      You can switch to any other package. Your current subscription will be cancelled and replaced with the new one.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleCancelSubscription} className="bg-destructive text-destructive-foreground">
-                      Cancel Subscription
+                    <AlertDialogCancel>Keep Current</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => setShowPackageDialog(true)}>
+                      Choose New Package
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -257,68 +280,86 @@ export default function SubscriptionManager({
       </Card>
 
       {/* Available Packages */}
-      {!activeSubscription && (
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Available Packages</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {displayPackages.map((pkg) => (
-              <Card 
-                key={pkg.id}
-                className="relative group hover:shadow-card transition-all duration-300 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm h-full flex flex-col cursor-pointer"
-                onClick={() => openPackageDialog(pkg)}
-              >
-                <CardHeader className="pb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <CardTitle className="text-base font-semibold text-foreground">
-                      {pkg.name}
-                    </CardTitle>
+      <div>
+        <h3 className="text-lg font-semibold mb-4">
+          {activeSubscription ? "Switch to Another Package" : "Available Packages"}
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {displayPackages.map((pkg) => (
+            <Card 
+              key={pkg.id}
+              className={`relative group hover:shadow-card transition-all duration-300 border-border/50 hover:border-primary/50 bg-card/80 backdrop-blur-sm h-full flex flex-col cursor-pointer ${
+                activeSubscription?.package_id === pkg.id ? 'ring-2 ring-primary/30 bg-primary/5' : ''
+              }`}
+              onClick={() => openPackageDialog(pkg)}
+            >
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <CardTitle className="text-base font-semibold text-foreground">
+                    {pkg.name}
+                  </CardTitle>
+                  <div className="flex gap-1">
                     {pkg.name === "Video Pulse" && (
                       <Badge className="bg-gradient-primary text-primary-foreground border-0">
                         Premium
                       </Badge>
                     )}
+                    {activeSubscription?.package_id === pkg.id && (
+                      <Badge variant="outline" className="text-primary border-primary">
+                        Current
+                      </Badge>
+                    )}
                   </div>
-                  <CardDescription className="text-xs text-muted-foreground mb-4">
-                    {pkg.description}
-                  </CardDescription>
-                  <div className="text-center">
-                    <span className="text-2xl font-bold text-primary">
-                      €{pkg.price_euro / 100}
-                    </span>
-                    <span className="text-sm text-muted-foreground ml-1">/month</span>
-                  </div>
-                </CardHeader>
+                </div>
+                <CardDescription className="text-xs text-muted-foreground mb-4">
+                  {pkg.description}
+                </CardDescription>
+                <div className="text-center">
+                  <span className="text-2xl font-bold text-primary">
+                    €{pkg.price_euro / 100}
+                  </span>
+                  <span className="text-sm text-muted-foreground ml-1">/month</span>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="pt-0 flex-1 flex flex-col">
+                <ul className="space-y-2 mb-6 flex-1">
+                  {pkg.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-2 text-xs">
+                      <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                      <span className="text-muted-foreground">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
                 
-                <CardContent className="pt-0 flex-1 flex flex-col">
-                  <ul className="space-y-2 mb-6 flex-1">
-                    {pkg.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2 text-xs">
-                        <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                        <span className="text-muted-foreground">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <Button 
-                    className={`w-full transition-all duration-300 ${
-                      pkg.name === "Video Pulse" 
-                        ? "bg-gradient-primary hover:shadow-glow text-primary-foreground border-0" 
-                        : "bg-secondary hover:bg-secondary/80"
-                    } text-sm py-2`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSubscribeToPackage(pkg.id);
-                    }}
-                    disabled={loading}
-                  >
-                    {loading ? "Subscribing..." : "Select Package"}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                <Button 
+                  className={`w-full transition-all duration-300 ${
+                    pkg.name === "Video Pulse" 
+                      ? "bg-gradient-primary hover:shadow-glow text-primary-foreground border-0" 
+                      : "bg-secondary hover:bg-secondary/80"
+                  } text-sm py-2`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (activeSubscription?.package_id === pkg.id) {
+                      toast({
+                        title: "Already subscribed",
+                        description: "You are already using this package.",
+                      });
+                      return;
+                    }
+                    handleSubscribeToPackage(pkg.id);
+                  }}
+                  disabled={loading || activeSubscription?.package_id === pkg.id}
+                >
+                  {loading ? "Processing..." : 
+                   activeSubscription?.package_id === pkg.id ? "Current Package" : 
+                   activeSubscription ? "Switch to This" : "Select Package"}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Package Details Dialog */}
       <Dialog open={showPackageDialog} onOpenChange={setShowPackageDialog}>
@@ -375,7 +416,8 @@ export default function SubscriptionManager({
                   disabled={loading}
                 >
                   <CreditCard className="mr-2 h-4 w-4" />
-                  {loading ? "Subscribing..." : "Subscribe Now"}
+                  {loading ? "Processing..." : 
+                   activeSubscription ? "Switch Package" : "Subscribe Now"}
                 </Button>
               </div>
             </>

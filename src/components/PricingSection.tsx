@@ -74,7 +74,7 @@ export default function PricingSection({ packages }: PricingSectionProps) {
     setSelectedPackage(packageId);
 
     try {
-      // Check if user already has an active subscription
+      // Check if user already has an active subscription and cancel it if switching
       const { data: existingSubscription } = await supabase
         .from('subscriptions')
         .select('*')
@@ -83,12 +83,18 @@ export default function PricingSection({ packages }: PricingSectionProps) {
         .maybeSingle();
 
       if (existingSubscription) {
-        toast({
-          title: "Subscription Exists",
-          description: "You already have an active subscription. Go to your dashboard to manage it.",
-        });
-        navigate('/dashboard');
-        return;
+        // Cancel existing subscription to allow switching
+        const { error: cancelError } = await supabase
+          .from('subscriptions')
+          .update({ 
+            status: 'cancelled',
+            end_date: new Date().toISOString()
+          })
+          .eq('id', existingSubscription.id);
+
+        if (cancelError) {
+          throw cancelError;
+        }
       }
 
       // Create subscription record
@@ -105,8 +111,10 @@ export default function PricingSection({ packages }: PricingSectionProps) {
       }
 
       toast({
-        title: "Package Activated!",
-        description: "Your package has been activated successfully. Redirecting to dashboard...",
+        title: existingSubscription ? "Package Switched!" : "Package Activated!",
+        description: existingSubscription 
+          ? "Your package has been switched successfully. Redirecting to dashboard..."
+          : "Your package has been activated successfully. Redirecting to dashboard...",
       });
 
       // Redirect to dashboard after successful subscription

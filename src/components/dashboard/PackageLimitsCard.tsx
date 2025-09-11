@@ -63,9 +63,12 @@ export default function PackageLimitsCard({ onUpgradeClick }: PackageLimitsCardP
         {/* Unlimited Package Benefits */}
         <div className="space-y-4">
           <div className="text-center p-6 bg-gradient-primary/10 rounded-lg border border-primary/20">
-            <Crown className="h-8 w-8 text-primary mx-auto mb-2" />
-            <h3 className="font-semibold text-primary mb-1">Unlimited Access</h3>
-            <p className="text-sm text-muted-foreground">All features unlocked with no restrictions</p>
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Crown className="h-8 w-8 text-primary" />
+              <Star className="h-6 w-6 text-primary animate-pulse" />
+            </div>
+            <h3 className="font-semibold text-primary mb-1">All Packages Available</h3>
+            <p className="text-sm text-muted-foreground">Choose any package - all features are unlimited</p>
           </div>
           
           <div className="grid grid-cols-3 gap-2 text-xs">
@@ -107,19 +110,16 @@ export default function PackageLimitsCard({ onUpgradeClick }: PackageLimitsCardP
         </div>
 
         {/* Upgrade Button */}
-        {(isAtLimit(usage.current_campaigns, limits.campaign_limit) || 
-          isNearLimit(usage.current_monthly_impressions, limits.monthly_impressions_limit)) && (
-          <div className="pt-4 border-t">
-            <Button 
-              onClick={onUpgradeClick}
-              className="w-full bg-gradient-primary text-primary-foreground border-0"
-              size="sm"
-            >
-              <Zap className="mr-2 h-4 w-4" />
-              Upgrade Package
-            </Button>
-          </div>
-        )}
+        <div className="pt-4 border-t">
+          <Button 
+            onClick={onUpgradeClick}
+            className="w-full bg-gradient-primary text-primary-foreground border-0"
+            size="sm"
+          >
+            <Zap className="mr-2 h-4 w-4" />
+            Switch Package
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

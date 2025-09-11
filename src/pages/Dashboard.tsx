@@ -35,6 +35,7 @@ import SubscriptionManager from "@/components/dashboard/SubscriptionManager";
 import CampaignSettings from "@/components/dashboard/CampaignSettings";
 import DetailedAnalytics from "@/components/dashboard/DetailedAnalytics";
 import PackageLimitsCard from "@/components/dashboard/PackageLimitsCard";
+import PackageManager from "@/components/dashboard/PackageManager";
 import { useCampaignAnalytics } from "@/hooks/useCampaignAnalytics";
 import { usePackageLimits } from "@/hooks/usePackageLimits";
 
@@ -350,7 +351,7 @@ export default function Dashboard() {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -358,6 +359,7 @@ export default function Dashboard() {
             <TabsTrigger value="settings">Settings</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="packages">Packages</TabsTrigger>
+            <TabsTrigger value="manage-packages">Manage</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -540,6 +542,17 @@ export default function Dashboard() {
               packages={packages}
               user={user}
               onSubscriptionChange={fetchUserData}
+            />
+          </TabsContent>
+
+          <TabsContent value="manage-packages" className="space-y-6">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold mb-2">Package Management</h2>
+              <p className="text-muted-foreground">Create and manage advertising packages for the platform</p>
+            </div>
+            <PackageManager 
+              packages={packages}
+              onPackagesChange={fetchUserData}
             />
           </TabsContent>
         </Tabs>
