@@ -180,7 +180,7 @@ export default function CreateAd() {
             </CardHeader>
             <CardContent>
               <FileUpload
-                onFileUpload={handleFileUpload}
+                onUpload={handleFileUpload}
                 acceptedTypes="image/*,video/*"
                 maxSize={10}
               />
