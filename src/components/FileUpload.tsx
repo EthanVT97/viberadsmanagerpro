@@ -164,7 +164,7 @@ export default function FileUpload({
           <div className="text-center">
             <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-muted-foreground mb-2">
-              Click to upload {label.toLowerCase()}
+              Click to upload {label?.toLowerCase() || 'file'}
             </p>
             <p className="text-xs text-muted-foreground">
               Max size: {Math.round(maxSize / (1024 * 1024))}MB

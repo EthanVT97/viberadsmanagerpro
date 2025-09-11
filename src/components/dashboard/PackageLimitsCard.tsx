@@ -10,7 +10,8 @@ import {
   AlertTriangle,
   Crown,
   Zap,
-  Star
+  Star,
+  Infinity
 } from "lucide-react";
 import { usePackageLimits } from "@/hooks/usePackageLimits";
 

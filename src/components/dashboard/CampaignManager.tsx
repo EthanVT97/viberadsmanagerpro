@@ -240,6 +240,24 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
 
     setLoading(true);
     try {
+      // First delete all ads in the campaign
+      const { error: adsError } = await supabase
+        .from('ads')
+        .delete()
+        .eq('campaign_id', campaignId)
+        .eq('user_id', user.id);
+
+      if (adsError) throw adsError;
+
+      // Then delete campaign analytics
+      const { error: analyticsError } = await supabase
+        .from('campaign_analytics')
+        .delete()
+        .eq('campaign_id', campaignId);
+
+      if (analyticsError) throw analyticsError;
+
+      // Finally delete the campaign
       const { error } = await supabase
         .from('campaigns')
         .delete()
@@ -385,7 +403,7 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                       className="flex-1 lg:flex-none"
                     >
                       <Eye className="mr-2 h-4 w-4" />
-                      View Details
+                      View
                     </Button>
                      
                      <Button

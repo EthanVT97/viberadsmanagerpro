@@ -182,7 +182,9 @@ export default function CreateAd() {
               <FileUpload
                 onUpload={handleFileUpload}
                 acceptedTypes="image/*,video/*"
-                maxSize={10}
+                maxSize={10 * 1024 * 1024}
+                bucket="campaign-images"
+                label="Upload Media"
               />
               {adData.mediaUrl && (
                 <div className="mt-4">

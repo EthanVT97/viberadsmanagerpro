@@ -210,7 +210,6 @@ export default function CampaignDetails() {
               <Button
                 onClick={() => navigate(`/campaigns/${campaign.id}/ads/create`)}
                 className="bg-gradient-primary text-primary-foreground border-0"
-                disabled={!limits}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Ad

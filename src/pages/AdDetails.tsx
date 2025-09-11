@@ -600,7 +600,7 @@ export default function AdDetails() {
               disabled={updateLoading}
             >
               <Save className="mr-2 h-4 w-4" />
-              {updateLoading ? "Saving..." : "Save Changes"}
+              {loading ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </DialogContent>
