@@ -76,10 +76,6 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
       return;
     }
 
-    // Check if user can create new campaign
-    // Always allow campaign creation for unlimited packages
-    const canCreate = true;
-
     setLoading(true);
     try {
       const { error } = await supabase
