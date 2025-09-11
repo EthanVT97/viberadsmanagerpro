@@ -50,7 +50,7 @@ export default function CreateCampaign() {
           user_id: user.id,
           name: formData.name,
           description: formData.description,
-          budget_euro: parseInt(formData.budget_euro) * 100, // Convert to cents
+          budget_euro: Math.round(parseFloat(formData.budget_euro) * 100), // Convert to cents
           target_audience: formData.target_audience,
           status: status,
           // These fields might not exist in the current table structure

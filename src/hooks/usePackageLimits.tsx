@@ -105,7 +105,19 @@ export function usePackageLimits() {
   };
 
   const canCreateAd = async (campaignId: string): Promise<boolean> => {
-    // All users can create unlimited ads
+    if (!user || !campaignId) return false;
+    
+    // Check if campaign exists and belongs to user
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .select('id')
+      .eq('id', campaignId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (error || !campaign) return false;
+    
+    // All users can create unlimited ads for their campaigns
     return true;
   };
 

@@ -125,7 +125,7 @@ export default function PackageManager({ packages, onPackagesChange }: PackageMa
         .update({
           name: formData.name,
           description: formData.description,
-          price_euro: parseInt(formData.price_euro) * 100, // Convert to cents
+          price_euro: Math.round(parseFloat(formData.price_euro) * 100), // Convert to cents
           features: formData.features,
           is_active: formData.is_active,
           updated_at: new Date().toISOString()

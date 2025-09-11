@@ -11,10 +11,11 @@ import { Settings, Save, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface CampaignSettingsProps {
-  campaignId?: string;
+  campaigns: any[];
+  onCampaignsChange: () => void;
 }
 
-export default function CampaignSettings({ campaignId }: CampaignSettingsProps) {
+export default function CampaignSettings({ campaigns, onCampaignsChange }: CampaignSettingsProps) {
   const { toast } = useToast();
   const [settings, setSettings] = useState({
     name: '',
