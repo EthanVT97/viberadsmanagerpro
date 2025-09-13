@@ -67,10 +67,20 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
   };
 
   const handleCreateCampaign = async () => {
-    if (!formData.name || !formData.budget || !user) {
+    if (!formData.name.trim() || !formData.budget.trim() || !user) {
       toast({
         title: "Missing information",
         description: "Please fill in campaign name and budget.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const budgetValue = parseFloat(formData.budget);
+    if (isNaN(budgetValue) || budgetValue <= 0) {
+      toast({
+        title: "Invalid budget",
+        description: "Please enter a valid budget amount greater than 0.",
         variant: "destructive",
       });
       return;
@@ -84,7 +94,7 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
           user_id: user.id,
           name: formData.name,
           status: 'draft',
-          budget_euro: parseInt(formData.budget) * 100, // Convert to cents
+          budget_euro: Math.round(budgetValue * 100), // Convert to cents
           target_audience: formData.targetAudience,
           description: formData.description
         });
@@ -111,10 +121,20 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
   };
 
   const handleEditCampaign = async () => {
-    if (!editingCampaign || !formData.name || !formData.budget || !user) {
+    if (!editingCampaign || !formData.name.trim() || !formData.budget.trim() || !user) {
       toast({
         title: "Missing information",
         description: "Please fill in campaign name and budget.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const budgetValue = parseFloat(formData.budget);
+    if (isNaN(budgetValue) || budgetValue <= 0) {
+      toast({
+        title: "Invalid budget",
+        description: "Please enter a valid budget amount greater than 0.",
         variant: "destructive",
       });
       return;
@@ -126,7 +146,7 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
         .from('campaigns')
         .update({
           name: formData.name,
-          budget_euro: parseInt(formData.budget) * 100, // Convert to cents
+          budget_euro: Math.round(budgetValue * 100), // Convert to cents
           target_audience: formData.targetAudience,
           description: formData.description
         })
