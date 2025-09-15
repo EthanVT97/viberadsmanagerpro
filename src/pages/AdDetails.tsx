@@ -384,27 +384,27 @@ export default function AdDetails() {
                     </a>
                   </div>
 
-                {ad.image_url && (
-                  <div>
-                    <Label className="font-medium">Image</Label>
-                    <img 
-                      src={ad.image_url} 
-                      alt={ad.name}
-                      className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
-                    />
-                  </div>
-                )}
+{ad.image_url && (
+  <div className="mt-4">
+    <Label className="font-medium">Image</Label>
+    <img
+      src={ad.image_url}
+      alt={ad.name}
+      className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
+    />
+  </div>
+)}
 
-                {ad.video_url && (
-                  <div>
-                    <Label className="font-medium">Video</Label>
-                    <video 
-                      src={ad.video_url}
-                      controls
-                      className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
-                    />
-                  </div>
-                )}
+    {ad.video_url && (
+  <div className="mt-4">
+    <Label className="font-medium">Video</Label>
+    <video
+      src={ad.video_url}
+      controls
+      className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
+    />
+  </div>
+)}
               </CardContent>
             </Card>
           </div>
