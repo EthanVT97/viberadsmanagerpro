@@ -24,6 +24,7 @@ export type Database = {
           headline: string | null
           id: string
           image_url: string | null
+          link_url: string | null
           name: string
           performance_data: Json | null
           status: string
@@ -40,6 +41,7 @@ export type Database = {
           headline?: string | null
           id?: string
           image_url?: string | null
+          link_url?: string | null
           name: string
           performance_data?: Json | null
           status?: string
@@ -56,6 +58,7 @@ export type Database = {
           headline?: string | null
           id?: string
           image_url?: string | null
+          link_url?: string | null
           name?: string
           performance_data?: Json | null
           status?: string
