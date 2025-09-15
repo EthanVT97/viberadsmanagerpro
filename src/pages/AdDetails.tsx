@@ -34,6 +34,7 @@ interface Ad {
   ad_type: string;
   headline: string;
   description: string;
+  link?: string;
   image_url?: string;
   video_url?: string;
   budget: number;
@@ -61,6 +62,7 @@ export default function AdDetails() {
     name: "",
     headline: "",
     description: "",
+    link: "",
     budget: "",
     image_url: "",
     video_url: ""
@@ -101,6 +103,7 @@ export default function AdDetails() {
         name: adData.name,
         headline: adData.headline || "",
         description: adData.description || "",
+        link: adData.link || "",
         budget: adData.budget.toString(),
         image_url: adData.image_url || "",
         video_url: adData.video_url || ""
@@ -128,6 +131,7 @@ export default function AdDetails() {
           name: formData.name,
           headline: formData.headline,
           description: formData.description,
+          link: formData.link || null,
           budget: parseFloat(formData.budget) || 0,
           image_url: formData.image_url || null,
           video_url: formData.video_url || null,
@@ -371,6 +375,14 @@ export default function AdDetails() {
                   </div>
                 </div>
 
+                {ad.link && (
+                  <div>
+                    <Label>Link</Label>
+                    <a href={ad.link} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                      {ad.link}
+                    </a>
+                  </div>
+
                 {ad.image_url && (
                   <div>
                     <Label className="font-medium">Image</Label>
@@ -397,169 +409,256 @@ export default function AdDetails() {
           </div>
 
           {/* Ad Preview */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Live Preview</CardTitle>
-                <CardDescription>How your ad appears to users</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="border-2 border-dashed border-border rounded-lg p-4 bg-muted/10">
-                  <div className="bg-white rounded-lg shadow-sm border max-w-sm mx-auto">
-                    {/* Ad Media */}
-                    <div className="relative">
-                      {ad.image_url && ad.ad_type === 'image' ? (
-                        <img
-                          src={ad.image_url}
-                          alt="Ad preview"
-                          className="w-full h-48 object-cover rounded-t-lg"
-                        />
-                      ) : ad.video_url && ad.ad_type === 'video' ? (
-                        <video
-                          src={ad.video_url}
-                          className="w-full h-48 object-cover rounded-t-lg"
-                          controls
-                          muted
-                        />
-                      ) : (
-                        <div className="w-full h-48 bg-gray-100 rounded-t-lg flex items-center justify-center">
-                          <div className="text-center text-gray-400">
-                            {ad.ad_type === 'image' ? (
-                              <>
-                                <Image className="h-8 w-8 mx-auto mb-2" />
-                                <p className="text-sm">No image</p>
-                              </>
-                            ) : (
-                              <>
-                                <Video className="h-8 w-8 mx-auto mb-2" />
-                                <p className="text-sm">No video</p>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className="absolute top-2 right-2">
-                        <span className="bg-black/70 text-white text-xs px-2 py-1 rounded">
-                          {ad.ad_type}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Ad Content */}
-                    <div className="p-4">
-                      <h3 className="font-bold text-lg mb-2 text-gray-900">
-                        {ad.headline || "No headline"}
-                      </h3>
-                      
-                      <p className="text-gray-700 text-sm leading-relaxed mb-3">
-                        {ad.description || "No description"}
-                      </p>
-                      
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                        Learn More
-                      </Button>
-                    </div>
-                  </div>
+<div className="space-y-6">
+  <Card>
+    <CardHeader>
+      <CardTitle>Live Preview</CardTitle>
+      <CardDescription>How your ad appears to users</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <div className="border-2 border-dashed border-border rounded-lg p-4 bg-muted/10">
+        <div className="bg-white rounded-lg shadow-sm border max-w-sm mx-auto">
+          {/* Ad Media */}
+          <div className="relative">
+            {ad.image_url && ad.ad_type === 'image' ? (
+              <img
+                src={ad.image_url}
+                alt="Ad preview"
+                className="w-full h-48 object-cover rounded-t-lg"
+              />
+            ) : ad.video_url && ad.ad_type === 'video' ? (
+              <video
+                src={ad.video_url}
+                className="w-full h-48 object-cover rounded-t-lg"
+                controls
+                muted
+              />
+            ) : (
+              <div className="w-full h-48 bg-gray-100 rounded-t-lg flex items-center justify-center">
+                <div className="text-center text-gray-400">
+                  {ad.ad_type === 'image' ? (
+                    <>
+                      <Image className="h-8 w-8 mx-auto mb-2" />
+                      <p className="text-sm">No image</p>
+                    </>
+                  ) : (
+                    <>
+                      <Video className="h-8 w-8 mx-auto mb-2" />
+                      <p className="text-sm">No video</p>
+                    </>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            )}
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Ad Information</CardTitle>
-                <CardDescription>Technical details and metadata</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium">Created:</span>
-                  <span className="text-sm text-muted-foreground">
-                    {new Date(ad.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium">Last Updated:</span>
-                  <span className="text-sm text-muted-foreground">
-                    {new Date(ad.updated_at).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium">Status:</span>
-                  <Badge variant={ad.status === 'active' ? 'default' : 'secondary'}>
-                    {ad.status}
-                  </Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm font-medium">Budget:</span>
-                  <span className="text-sm text-muted-foreground">€{ad.budget}</span>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="absolute top-2 right-2">
+              <span className="bg-black/70 text-white text-xs px-2 py-1 rounded">
+                {ad.ad_type}
+              </span>
+            </div>
+          </div>
+
+          {/* Ad Content */}
+          <div className="p-4">
+            <h3 className="font-bold text-lg mb-2 text-gray-900">
+              {ad.headline || "No headline"}
+            </h3>
+
+            <p className="text-gray-700 text-sm leading-relaxed mb-3">
+              {ad.description || "No description"}
+            </p>
+
+            {ad.link ? (
+              <Button asChild className="w-full mt-3 bg-blue-600 hover:bg-blue-700 text-white">
+                <a href={ad.link} target="_blank" rel="noopener noreferrer">
+                  Learn More
+                </a>
+              </Button>
+            ) : (
+              <Button className="w-full mt-3 bg-gray-300 text-gray-700" disabled>
+                Learn More
+              </Button>
+            )}
           </div>
         </div>
-      </main>
+      </div>
+    </CardContent>
+  </Card>
 
-      {/* Edit Dialog */}
-      <Dialog open={editing} onOpenChange={setEditing}>
-        <DialogContent className="sm:max-w-[600px] mx-4 max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Edit Ad</DialogTitle>
-            <DialogDescription>
-              Update your ad content and settings
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">Ad Name</Label>
-              <Input
-                id="edit-name"
-                value={formData.name}
-                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Enter ad name"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="edit-headline">Headline</Label>
-              <Input
-                id="edit-headline"
-                value={formData.headline}
-                onChange={(e) => setFormData(prev => ({ ...prev, headline: e.target.value }))}
-                placeholder="Enter compelling headline"
-                maxLength={60}
-              />
-              <p className="text-xs text-muted-foreground">
-                {formData.headline.length}/60 characters
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="edit-description">Description</Label>
-              <Textarea
-                id="edit-description"
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Describe your product or service"
-                rows={4}
-                maxLength={300}
-              />
-              <p className="text-xs text-muted-foreground">
-                {formData.description.length}/300 characters
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="edit-budget">Budget (EUR)</Label>
-              <Input
-                id="edit-budget"
-                type="number"
-                value={formData.budget}
-                onChange={(e) => setFormData(prev => ({ ...prev, budget: e.target.value }))}
-                placeholder="0.00"
-                min="0"
-                step="0.01"
-              />
-            </div>
+  {/* Ad Information */}
+  <Card>
+    <CardHeader>
+      <CardTitle>Ad Information</CardTitle>
+      <CardDescription>Technical details and metadata</CardDescription>
+    </CardHeader>
+    <CardContent className="space-y-3">
+      <div className="flex justify-between">
+        <span className="text-sm font-medium">Created:</span>
+        <span className="text-sm text-muted-foreground">
+          {new Date(ad.created_at).toLocaleDateString()}
+        </span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-sm font-medium">Last Updated:</span>
+        <span className="text-sm text-muted-foreground">
+          {new Date(ad.updated_at).toLocaleDateString()}
+        </span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-sm font-medium">Status:</span>
+        <Badge variant={ad.status === 'active' ? 'default' : 'secondary'}>
+          {ad.status}
+        </Badge>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-sm font-medium">Budget:</span>
+        <span className="text-sm text-muted-foreground">€{ad.budget}</span>
+      </div>
+    </CardContent>
+  </Card>
+</div>
+
+  {/* Edit Dialog */}
+<Dialog open={editing} onOpenChange={setEditing}>
+  <DialogContent className="sm:max-w-[600px] mx-4 max-h-[90vh] overflow-y-auto">
+    <DialogHeader>
+      <DialogTitle>Edit Ad</DialogTitle>
+      <DialogDescription>
+        Update your ad content, link, and settings
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="grid gap-4 py-4">
+      {/* Ad Name */}
+      <div className="space-y-2">
+        <Label htmlFor="edit-name">Ad Name</Label>
+        <Input
+          id="edit-name"
+          value={formData.name}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, name: e.target.value }))
+          }
+          placeholder="Enter ad name"
+        />
+      </div>
+
+      {/* Headline */}
+      <div className="space-y-2">
+        <Label htmlFor="edit-headline">Headline</Label>
+        <Input
+          id="edit-headline"
+          value={formData.headline}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, headline: e.target.value }))
+          }
+          placeholder="Enter compelling headline"
+          maxLength={60}
+        />
+        <p className="text-xs text-muted-foreground">
+          {formData.headline.length}/60 characters
+        </p>
+      </div>
+
+      {/* Description */}
+      <div className="space-y-2">
+        <Label htmlFor="edit-description">Description</Label>
+        <Textarea
+          id="edit-description"
+          value={formData.description}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, description: e.target.value }))
+          }
+          placeholder="Describe your product or service"
+          rows={4}
+          maxLength={300}
+        />
+        <p className="text-xs text-muted-foreground">
+          {formData.description.length}/300 characters
+        </p>
+      </div>
+
+      {/* Link Field */}
+      <div className="space-y-2">
+        <Label htmlFor="edit-link">Link</Label>
+        <Input
+          id="edit-link"
+          type="url"
+          value={formData.link}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, link: e.target.value }))
+          }
+          placeholder="https://example.com"
+        />
+        <p className="text-xs text-muted-foreground">
+          Enter the landing page or CTA link
+        </p>
+      </div>
+
+      {/* Budget */}
+      <div className="space-y-2">
+        <Label htmlFor="edit-budget">Budget (EUR)</Label>
+        <Input
+          id="edit-budget"
+          type="number"
+          value={formData.budget}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, budget: e.target.value }))
+          }
+          placeholder="0.00"
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      {/* Media Upload (kept same) */}
+      <div className="space-y-4">
+        {ad.ad_type === "image" ? (
+          <FileUpload
+            onUpload={(url) =>
+              setFormData((prev) => ({ ...prev, image_url: url }))
+            }
+            acceptedTypes="image/*"
+            maxSize={5 * 1024 * 1024}
+            bucket="campaign-images"
+            label="Update Image"
+            currentFile={formData.image_url}
+          />
+        ) : (
+          <FileUpload
+            onUpload={(url) =>
+              setFormData((prev) => ({ ...prev, video_url: url }))
+            }
+            acceptedTypes="video/*"
+            maxSize={50 * 1024 * 1024}
+            bucket="campaign-videos"
+            label="Update Video"
+            currentFile={formData.video_url}
+          />
+        )}
+      </div>
+    </div>
+
+    {/* Footer Buttons */}
+    <div className="flex flex-col sm:flex-row gap-2">
+      <Button
+        variant="outline"
+        onClick={() => setEditing(false)}
+        className="flex-1"
+        disabled={loading}
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={handleUpdateAd}
+        className="bg-gradient-primary text-primary-foreground border-0 flex-1"
+        disabled={loading}
+      >
+        <Save className="mr-2 h-4 w-4" />
+        {loading ? "Saving..." : "Save Changes"}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>    
 
             {/* Media Upload */}
             <div className="space-y-4">
