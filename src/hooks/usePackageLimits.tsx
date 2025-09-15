@@ -50,16 +50,17 @@ export function usePackageLimits() {
         `)
         .eq('user_id', user.id)
         .eq('status', 'active')
-        .maybeSingle();
+        .limit(1);
 
       if (subscriptionError) throw subscriptionError;
 
-      if (activeSubscription && activeSubscription.packages) {
+      const subscription = activeSubscription?.[0];
+      if (subscription && subscription.packages) {
         setLimits({
-          campaign_limit: activeSubscription.packages.campaign_limit || 999999,
-          monthly_impressions_limit: activeSubscription.packages.monthly_impressions_limit || 999999999,
-          ads_per_campaign_limit: activeSubscription.packages.ads_per_campaign_limit || 999999,
-          package_name: activeSubscription.packages.name
+          campaign_limit: subscription.packages.campaign_limit || 999999,
+          monthly_impressions_limit: subscription.packages.monthly_impressions_limit || 999999999,
+          ads_per_campaign_limit: subscription.packages.ads_per_campaign_limit || 999999,
+          package_name: subscription.packages.name
         });
       } else {
         // Default limits for users without subscription
