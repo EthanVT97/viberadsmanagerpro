@@ -28,8 +28,7 @@ export default function CreateAd() {
     ad_type: '',
     budget: '',
     image_url: '',
-    video_url: '',
-    link_url: ''
+    video_url: ''
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -82,8 +81,7 @@ export default function CreateAd() {
           image_url: adData.image_url || null,
           video_url: adData.video_url || null,
           budget: parseFloat(adData.budget) || 0,
-          status: 'draft',
-          performance_data: { link_url: adData.link_url || null }
+          status: 'draft'
         })
         .select()
         .single();
