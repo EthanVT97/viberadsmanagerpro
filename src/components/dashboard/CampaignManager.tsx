@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Separator } from "@/components/ui/separator";
 import { 
   Plus,
   Play,
@@ -17,12 +19,20 @@ import {
   BarChart3,
   Eye,
   MousePointer,
-  TrendingUp
+  TrendingUp,
+  ChevronDown,
+  ChevronUp,
+  Image,
+  Video,
+  ExternalLink,
+  Link as LinkIcon,
+  Type
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePackageLimits } from "@/hooks/usePackageLimits";
+import { Calendar } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -37,6 +47,20 @@ interface Campaign {
   createdAt: string;
 }
 
+interface Ad {
+  id: string;
+  campaign_id: string;
+  name: string;
+  ad_type: string;
+  headline: string;
+  description: string;
+  image_url?: string;
+  video_url?: string;
+  link_url?: string;
+  budget: number;
+  status: string;
+  created_at: string;
+}
 interface CampaignManagerProps {
   campaigns: Campaign[];
   onCampaignsChange: () => void;
@@ -49,6 +73,9 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(false);
+  const [expandedCampaigns, setExpandedCampaigns] = useState<Set<string>>(new Set());
+  const [campaignAds, setCampaignAds] = useState<Record<string, Ad[]>>({});
+  const [loadingAds, setLoadingAds] = useState<Set<string>>(new Set());
   const [formData, setFormData] = useState({
     name: '',
     budget: '',
@@ -56,6 +83,80 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
     description: ''
   });
   const { toast } = useToast();
+
+  const fetchCampaignAds = async (campaignId: string) => {
+    if (!user || campaignAds[campaignId]) return;
+    
+    setLoadingAds(prev => new Set(prev).add(campaignId));
+    try {
+      const { data, error } = await supabase
+        .from('ads')
+        .select('*')
+        .eq('campaign_id', campaignId)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      setCampaignAds(prev => ({
+        ...prev,
+        [campaignId]: data || []
+      }));
+    } catch (error: any) {
+      toast({
+        title: "Error loading ads",
+        description: error.message || "Failed to load campaign ads",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(campaignId);
+        return newSet;
+      });
+    }
+  };
+
+  const toggleCampaignExpansion = (campaignId: string) => {
+    const newExpanded = new Set(expandedCampaigns);
+    if (newExpanded.has(campaignId)) {
+      newExpanded.delete(campaignId);
+    } else {
+      newExpanded.add(campaignId);
+      fetchCampaignAds(campaignId);
+    }
+    setExpandedCampaigns(newExpanded);
+  };
+
+  const handleLivePreview = (ad: Ad) => {
+    if (ad.link_url) {
+      window.open(ad.link_url, '_blank', 'noopener,noreferrer');
+    } else {
+      toast({
+        title: "No link URL",
+        description: "This ad doesn't have a link URL set.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getAdTypeIcon = (adType: string) => {
+    switch (adType) {
+      case 'image': return <Image className="h-4 w-4" />;
+      case 'video': return <Video className="h-4 w-4" />;
+      case 'text': return <Type className="h-4 w-4" />;
+      default: return <Image className="h-4 w-4" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100';
+      case 'paused': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100';
+      case 'draft': return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100';
+    }
+  };
 
   const resetForm = () => {
     setFormData({
@@ -343,7 +444,8 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
           {campaigns.map((campaign) => (
             <Card key={campaign.id} className="hover:shadow-card transition-shadow">
               <CardContent className="p-4 sm:p-6">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="space-y-4">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
                       <h3 className="font-semibold text-base sm:text-lg">{campaign.name}</h3>
@@ -384,6 +486,245 @@ export default function CampaignManager({ campaigns, onCampaignsChange }: Campai
                       </div>
                     </div>
                   </div>
+                  </div>
+
+                  {/* Campaign Ads Section */}
+                  <Collapsible 
+                    open={expandedCampaigns.has(campaign.id)}
+                    onOpenChange={() => toggleCampaignExpansion(campaign.id)}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-between p-2 h-auto"
+                      >
+                        <span className="text-sm font-medium">
+                          View Ads ({campaignAds[campaign.id]?.length || 0})
+                        </span>
+                        {expandedCampaigns.has(campaign.id) ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
+                    
+                    <CollapsibleContent className="space-y-4">
+                      <Separator />
+                      
+                      {loadingAds.has(campaign.id) ? (
+                        <div className="text-center py-4">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+                          <p className="text-sm text-muted-foreground mt-2">Loading ads...</p>
+                        </div>
+                      ) : campaignAds[campaign.id]?.length === 0 ? (
+                        <div className="text-center py-6 bg-muted/30 rounded-lg">
+                          <BarChart3 className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">No ads created yet</p>
+                          <Button 
+                            size="sm" 
+                            className="mt-2 bg-gradient-primary text-primary-foreground border-0"
+                            onClick={() => navigate(`/campaigns/${campaign.id}/ads/create`)}
+                          >
+                            <Plus className="h-3 w-3 mr-1" />
+                            Create First Ad
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          {campaignAds[campaign.id]?.map((ad) => (
+                            <Card key={ad.id} className="bg-muted/20 border-border/50">
+                              <CardContent className="p-4">
+                                <div className="space-y-4">
+                                  {/* Ad Header */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                      <div className="flex items-center gap-2">
+                                        {getAdTypeIcon(ad.ad_type)}
+                                        <h4 className="font-medium">{ad.name}</h4>
+                                      </div>
+                                      <Badge className={getStatusColor(ad.status)}>
+                                        {ad.status}
+                                      </Badge>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      {ad.link_url && (
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => handleLivePreview(ad)}
+                                          className="text-xs"
+                                        >
+                                          <ExternalLink className="h-3 w-3 mr-1" />
+                                          Live Preview
+                                        </Button>
+                                      )}
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => navigate(`/campaigns/${campaign.id}/ads/${ad.id}`)}
+                                        className="text-xs"
+                                      >
+                                        <Eye className="h-3 w-3 mr-1" />
+                                        View
+                                      </Button>
+                                    </div>
+                                  </div>
+
+                                  {/* Ad Content and Media */}
+                                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                    {/* Ad Content */}
+                                    <div className="space-y-3">
+                                      <div>
+                                        <Label className="text-xs font-medium text-muted-foreground">Headline</Label>
+                                        <p className="text-sm font-medium">
+                                          {ad.headline || 'No headline set'}
+                                        </p>
+                                      </div>
+                                      
+                                      <div>
+                                        <Label className="text-xs font-medium text-muted-foreground">Description</Label>
+                                        <p className="text-sm text-muted-foreground line-clamp-2">
+                                          {ad.description || 'No description set'}
+                                        </p>
+                                      </div>
+                                      
+                                      <div className="flex items-center justify-between">
+                                        <div>
+                                          <Label className="text-xs font-medium text-muted-foreground">Ad Type</Label>
+                                          <div className="flex items-center gap-1">
+                                            {getAdTypeIcon(ad.ad_type)}
+                                            <span className="text-sm capitalize">{ad.ad_type}</span>
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <Label className="text-xs font-medium text-muted-foreground">Budget</Label>
+                                          <p className="text-sm font-medium">€{ad.budget}</p>
+                                        </div>
+                                      </div>
+
+                                      {ad.link_url && (
+                                        <div>
+                                          <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                                            <LinkIcon className="h-3 w-3" />
+                                            Link URL
+                                          </Label>
+                                          <div className="flex items-center gap-2">
+                                            <p className="text-sm text-primary truncate flex-1">
+                                              {ad.link_url}
+                                            </p>
+                                            <Button
+                                              size="sm"
+                                              variant="ghost"
+                                              onClick={() => handleLivePreview(ad)}
+                                              className="h-6 w-6 p-0"
+                                            >
+                                              <ExternalLink className="h-3 w-3" />
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {/* Ad Media */}
+                                    <div className="space-y-3">
+                                      {ad.image_url && ad.ad_type === 'image' && (
+                                        <div>
+                                          <Label className="text-xs font-medium text-muted-foreground">Image</Label>
+                                          <div className="relative">
+                                            <img 
+                                              src={ad.image_url} 
+                                              alt={ad.name}
+                                              className="w-full h-32 object-cover rounded-lg border"
+                                            />
+                                            <div className="absolute top-2 right-2">
+                                              <Badge variant="secondary" className="text-xs">
+                                                Image
+                                              </Badge>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {ad.video_url && ad.ad_type === 'video' && (
+                                        <div>
+                                          <Label className="text-xs font-medium text-muted-foreground">Video</Label>
+                                          <div className="relative">
+                                            <video 
+                                              src={ad.video_url}
+                                              className="w-full h-32 object-cover rounded-lg border"
+                                              controls={false}
+                                              muted
+                                            />
+                                            <div className="absolute top-2 right-2">
+                                              <Badge variant="secondary" className="text-xs">
+                                                Video
+                                              </Badge>
+                                            </div>
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                              <div className="w-8 h-8 bg-black/50 rounded-full flex items-center justify-center">
+                                                <Play className="h-4 w-4 text-white ml-0.5" />
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {ad.ad_type === 'text' && (
+                                        <div className="p-4 bg-muted/50 rounded-lg border-2 border-dashed border-border">
+                                          <div className="text-center">
+                                            <Type className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
+                                            <p className="text-xs text-muted-foreground">Text-only ad</p>
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {!ad.image_url && !ad.video_url && ad.ad_type !== 'text' && (
+                                        <div className="p-4 bg-muted/30 rounded-lg border-2 border-dashed border-border">
+                                          <div className="text-center">
+                                            <Image className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
+                                            <p className="text-xs text-muted-foreground">No media uploaded</p>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Ad Actions */}
+                                  <div className="flex flex-wrap gap-2 pt-2 border-t border-border/50">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => navigate(`/campaigns/${campaign.id}/ads/${ad.id}`)}
+                                      className="text-xs"
+                                    >
+                                      <Edit className="h-3 w-3 mr-1" />
+                                      Edit Ad
+                                    </Button>
+                                    
+                                    {ad.link_url && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => handleLivePreview(ad)}
+                                        className="text-xs bg-primary/5 border-primary/20 hover:bg-primary/10"
+                                      >
+                                        <ExternalLink className="h-3 w-3 mr-1" />
+                                        Live Preview
+                                      </Button>
+                                    )}
+                                    
+                                    <div className="text-xs text-muted-foreground flex items-center gap-1 ml-auto">
+                                      <Calendar className="h-3 w-3" />
+                                      Created: {new Date(ad.created_at).toLocaleDateString()}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                        </div>
+                      )}
+                    </CollapsibleContent>
+                  </Collapsible>
                   
                    <div className="flex flex-row lg:flex-col gap-2">
                      <Button
