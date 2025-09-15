@@ -13,5 +13,32 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce'
   }
 });
+
+// Handle authentication errors by clearing invalid tokens
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'TOKEN_REFRESHED' && !session) {
+    // If token refresh failed, clear the stored session
+    localStorage.removeItem('sb-jlkclltgwquauwkwfthn-auth-token');
+  }
+});
+
+// Clear any existing invalid tokens on initialization
+const clearInvalidTokens = async () => {
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession();
+    if (error && error.message.includes('refresh_token_not_found')) {
+      localStorage.removeItem('sb-jlkclltgwquauwkwfthn-auth-token');
+      await supabase.auth.signOut();
+    }
+  } catch (error) {
+    // If there's any error getting the session, clear the stored tokens
+    localStorage.removeItem('sb-jlkclltgwquauwkwfthn-auth-token');
+  }
+};
+
+// Run the cleanup on client initialization
+clearInvalidTokens();
