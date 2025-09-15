@@ -597,7 +597,7 @@ export default function AdDetails() {
             <Button 
               onClick={handleUpdateAd} 
               className="bg-gradient-primary text-primary-foreground border-0 flex-1"
-              disabled={updateLoading}
+              disabled={loading}
             >
               <Save className="mr-2 h-4 w-4" />
               {loading ? "Saving..." : "Save Changes"}
