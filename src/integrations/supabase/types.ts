@@ -258,20 +258,175 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "campaigns_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          ads_per_campaign_limit: number | null
+          campaign_limit: number | null
+          {
             foreignKeyName: "subscriptions_package_id_fkey"
             columns: ["package_id"]
             isOneToOne: false
             referencedRelation: "packages"
+          monthly_impressions_limit: number | null
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+          ads_per_campaign_limit?: number | null
+          campaign_limit?: number | null
+        Row: {
+          created_at: string | null
+          data: Json | null
+          expires_at: string | null
+          id: string
+          monthly_impressions_limit?: number | null
+          message: string
+          read: boolean | null
+          title: string
+          type: string
+          user_id: string
+          ads_per_campaign_limit?: number | null
+          campaign_limit?: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          data?: Json | null
+          expires_at?: string | null
+          monthly_impressions_limit?: number | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          email_billing: boolean | null
+          email_campaigns: boolean | null
+          email_performance: boolean | null
+          email_system: boolean | null
+          {
+            foreignKeyName: "profiles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          push_billing: boolean | null
+          push_campaigns: boolean | null
+          push_performance: boolean | null
+          push_system: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_billing?: boolean | null
+          email_campaigns?: boolean | null
+          email_performance?: boolean | null
+          email_system?: boolean | null
+          push_billing?: boolean | null
+          push_campaigns?: boolean | null
+          push_performance?: boolean | null
+          push_system?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_billing?: boolean | null
+          email_campaigns?: boolean | null
+          email_performance?: boolean | null
+          email_system?: boolean | null
+          push_billing?: boolean | null
+          push_campaigns?: boolean | null
+          push_performance?: boolean | null
+          push_system?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_package_limits: {
+        Args: {
+          user_uuid: string
+        }
+        Returns: {
+          campaign_limit: number
+          monthly_impressions_limit: number
+          ads_per_campaign_limit: number
+          package_name: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

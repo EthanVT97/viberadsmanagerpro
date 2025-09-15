@@ -37,19 +37,36 @@ export function usePackageLimits() {
     setLoading(true);
     try {
       // Get package limits
-      const { data: limitsData, error: limitsError } = await supabase
-        .rpc('get_user_package_limits', { user_uuid: user.id });
+      const { data: activeSubscription, error: subscriptionError } = await supabase
+        .from('subscriptions')
+        .select(`
+          *,
+          packages (
+            name,
+            campaign_limit,
+            monthly_impressions_limit,
+            ads_per_campaign_limit
+          )
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .maybeSingle();
 
-      if (limitsError) throw limitsError;
+      if (subscriptionError) throw subscriptionError;
 
-      if (limitsData && limitsData.length > 0) {
-        setLimits(limitsData[0]);
+      if (activeSubscription && activeSubscription.packages) {
+        setLimits({
+          campaign_limit: activeSubscription.packages.campaign_limit || 999999,
+          monthly_impressions_limit: activeSubscription.packages.monthly_impressions_limit || 999999999,
+          ads_per_campaign_limit: activeSubscription.packages.ads_per_campaign_limit || 999999,
+          package_name: activeSubscription.packages.name
+        });
       } else {
         // Default limits for users without subscription
         setLimits({
-          campaign_limit: 1,
-          monthly_impressions_limit: 1000,
-          ads_per_campaign_limit: 3,
+          campaign_limit: 999999,
+          monthly_impressions_limit: 999999999,
+          ads_per_campaign_limit: 999999,
           package_name: 'Free Trial'
         });
       }
