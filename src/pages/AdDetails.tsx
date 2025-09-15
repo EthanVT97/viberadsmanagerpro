@@ -384,32 +384,12 @@ export default function AdDetails() {
                     </a>
                   </div>
 
-{ad.image_url && (
-  <div className="mt-4">
-    <Label className="font-medium">Image</Label>
-    <img
-      src={ad.image_url}
-      alt={ad.name}
-      className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
-    />
-  </div>
-)}
 
-    {ad.video_url && (
-  <div className="mt-4">
-    <Label className="font-medium">Video</Label>
-    <video
-      src={ad.video_url}
-      controls
-      className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
-    />
-  </div>
-)}
               </CardContent>
             </Card>
           </div>
 
-          {/* Ad Preview */}
+{/* Ad Preview */}
 <div className="space-y-6">
   <Card>
     <CardHeader>
@@ -417,8 +397,39 @@ export default function AdDetails() {
       <CardDescription>How your ad appears to users</CardDescription>
     </CardHeader>
     <CardContent>
-      <div className="border-2 border-dashed border-border rounded-lg p-4 bg-muted/10">
+      <div className="border-2 border-dashed border-r-border rounded-lg p-4 bg-muted/10">
         <div className="bg-white rounded-lg shadow-sm border max-w-sm mx-auto">
+          
+          {/* Image Section */}
+          {ad.image_url && (
+            <div className="mt-4">
+              <Label className="font-medium">Image</Label>
+              <img
+                src={ad.image_url}
+                alt={ad.name}
+                className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
+              />
+            </div>
+          )}
+
+          {/* Video Section */}
+          {ad.video_url && (
+            <div className="mt-4">
+              <Label className="font-medium">Video</Label>
+              <video
+                src={ad.video_url}
+                controls
+                className="w-full max-w-sm h-48 object-cover rounded-lg mt-2"
+              />
+            </div>
+          )}
+
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+</div>
+      
           {/* Ad Media */}
           <div className="relative">
             {ad.image_url && ad.ad_type === 'image' ? (
