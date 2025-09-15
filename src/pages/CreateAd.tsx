@@ -53,7 +53,7 @@ export default function CreateAd() {
     if (!user || !campaignId) {
       toast({
         title: "Error",
-        description: "အသုံးပြုသူအား အတည်ပြုခြင်းမရှိပါ သို့မဟုတ် ကမ်ပိန်းကို ရှာမတွေ့ပါ။",
+        description: "User not authenticated or campaign not found.",
         variant: "destructive",
       });
       return;
@@ -61,8 +61,8 @@ export default function CreateAd() {
 
     if (!adData.name || !adData.ad_type || !adData.headline || !adData.description) {
       toast({
-        title: "အချက်အလက် မပြည့်စုံပါ",
-        description: "လိုအပ်သော ကွက်လပ်အားလုံးကို ဖြည့်ပါ။",
+        title: "Missing information",
+        description: "Please fill in all required fields.",
         variant: "destructive",
       });
       return;
@@ -71,8 +71,8 @@ export default function CreateAd() {
     // Link URL validation
     if (adData.link_url && !/^https?:\/\/.+/.test(adData.link_url)) {
         toast({
-            title: "Link URL မမှန်ကန်ပါ",
-            description: "http:// သို့မဟုတ် https:// ဖြင့် စတင်သော မှန်ကန်သော URL ကို ထည့်ပါ။",
+            title: "Invalid Link URL",
+            description: "Please enter a valid URL starting with http:// or https://",
             variant: "destructive",
         });
         return;
@@ -101,15 +101,15 @@ export default function CreateAd() {
       if (error) throw error;
 
       toast({
-        title: "ကြော်ငြာ ဖန်တီးပြီးပါပြီ။",
-        description: "သင်၏ကြော်ငြာကို ဖန်တီးပြီး မူကြမ်းအဖြစ် သိမ်းဆည်းထားပါသည်။",
+        title: "Ad created successfully!",
+        description: "Your ad has been created and saved as a draft.",
       });
 
       navigate(`/campaigns/${campaignId}/ads/${data.id}`);
     } catch (error: any) {
       toast({
-        title: "ကြော်ငြာ ဖန်တီးရာတွင် အမှား",
-        description: error.message || "ကြော်ငြာ ဖန်တီး၍ မရပါ။",
+        title: "Error creating ad",
+        description: error.message || "Failed to create ad.",
         variant: "destructive",
       });
     } finally {
@@ -123,9 +123,8 @@ export default function CreateAd() {
       window.open(adData.link_url, '_blank');
     } else {
         toast({
-            title: "Link URL မရှိသေးပါ",
-            description: "Link URL ကို ထည့်သွင်းပေးပါ။",
-            variant: "info",
+            title: "No Link URL",
+            description: "Please add a Link URL first.",
         });
     }
   };
@@ -140,11 +139,11 @@ export default function CreateAd() {
           className="flex items-center gap-2"
         >
           <ArrowLeft className="h-4 w-4" />
-          ကမ်ပိန်းသို့ ပြန်သွားရန်
+          Back to Campaign
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">ကြော်ငြာအသစ် ဖန်တီးပါ</h1>
-          <p className="text-muted-foreground">သင်၏ ကြော်ငြာကမ်ပိန်းကို ဒီဇိုင်းဆွဲပြီး ပြင်ဆင်ပါ။</p>
+          <h1 className="text-3xl font-bold">Create New Ad</h1>
+          <p className="text-muted-foreground">Design and configure your advertising campaign.</p>
         </div>
       </div>
 
@@ -153,88 +152,88 @@ export default function CreateAd() {
           <form onSubmit={handleSubmit}>
             <Card>
             <CardHeader>
-              <CardTitle>အခြေခံ အချက်အလက်</CardTitle>
+              <CardTitle>Basic Information</CardTitle>
               <CardDescription>
-                သင်၏ကြော်ငြာအတွက် အခြေခံအချက်အလက်များကို ထည့်ပါ။
+                Enter basic information for your ad.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">ကြော်ငြာအမည် *</Label>
+                <Label htmlFor="name">Ad Name *</Label>
                 <Input
                   id="name"
                   value={adData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="ကြော်ငြာအမည် ထည့်ပါ"
+                  placeholder="Enter ad name"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="headline">ခေါင်းစဉ် *</Label>
+                <Label htmlFor="headline">Headline *</Label>
                 <Input
                   id="headline"
                   value={adData.headline}
                   onChange={(e) => handleInputChange('headline', e.target.value)}
-                  placeholder="ဆွဲဆောင်မှုရှိသော ခေါင်းစဉ် ထည့်ပါ"
+                  placeholder="Enter compelling headline"
                   maxLength={60}
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  {adData.headline.length}/60 စာလုံး
+                  {adData.headline.length}/60 characters
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">ဖော်ပြချက် *</Label>
+                <Label htmlFor="description">Description *</Label>
                 <Textarea
                   id="description"
                   value={adData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="သင်၏ ထုတ်ကုန် သို့မဟုတ် ဝန်ဆောင်မှုကို ဖော်ပြပါ"
+                  placeholder="Describe your product or service"
                   rows={4}
                   maxLength={300}
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  {adData.description.length}/300 စာလုံး
+                  {adData.description.length}/300 characters
                 </p>
               </div>
 
-              {/* Link URL အတွက် Input Field အသစ် */}
+              {/* Link URL Input Field */}
               <div className="space-y-2">
                 <Label htmlFor="link_url">Link URL</Label>
                 <Input
                   id="link_url"
-                  type="url" // browser validation အတွက် type="url" ကို အသုံးပြုပါ
+                  type="url"
                   value={adData.link_url}
                   onChange={(e) => handleInputChange('link_url', e.target.value)}
                   placeholder="https://your-website.com"
                 />
                 <p className="text-xs text-muted-foreground">
-                  အသုံးပြုသူများ သင့်ကြော်ငြာကို နှိပ်သောအခါ ရောက်ရှိမည့် URL။
+                  URL where users will be directed when they click your ad.
                 </p>
               </div>
 
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="ad_type">ကြော်ငြာအမျိုးအစား *</Label>
+                  <Label htmlFor="ad_type">Ad Type *</Label>
                   <Select value={adData.ad_type} onValueChange={(value) => handleInputChange('ad_type', value)} required>
                     <SelectTrigger>
-                      <SelectValue placeholder="ကြော်ငြာအမျိုးအစား ရွေးပါ" />
+                      <SelectValue placeholder="Select ad type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="image">ရုပ်ပုံကြော်ငြာ</SelectItem>
-                      <SelectItem value="video">ဗီဒီယိုကြော်ငြာ</SelectItem>
-                      <SelectItem value="carousel">Carousel ကြော်ငြာ</SelectItem>
-                      <SelectItem value="text">စာသားကြော်ငြာ</SelectItem>
+                      <SelectItem value="image">Image Ad</SelectItem>
+                      <SelectItem value="video">Video Ad</SelectItem>
+                      <SelectItem value="carousel">Carousel Ad</SelectItem>
+                      <SelectItem value="text">Text Ad</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="budget">ဘတ်ဂျက် (EUR)</Label>
+                  <Label htmlFor="budget">Budget (EUR)</Label>
                   <Input
                     id="budget"
                     type="number"
@@ -252,9 +251,9 @@ export default function CreateAd() {
           {(adData.ad_type === 'image' || adData.ad_type === 'video') && (
             <Card>
             <CardHeader>
-              <CardTitle>မီဒီယာ ထည့်သွင်းခြင်း</CardTitle>
+              <CardTitle>Media Upload</CardTitle>
               <CardDescription>
-                သင်၏ကြော်ငြာအတွက် {adData.ad_type} ကို ထည့်ပါ။
+                Upload {adData.ad_type} for your ad.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -264,7 +263,7 @@ export default function CreateAd() {
                   acceptedTypes="image/*"
                   maxSize={5 * 1024 * 1024}
                   bucket="campaign-images"
-                  label="ရုပ်ပုံထည့်ပါ"
+                  label="Upload Image"
                   currentFile={adData.image_url}
                 />
               ) : (
@@ -273,7 +272,7 @@ export default function CreateAd() {
                   acceptedTypes="video/*"
                   maxSize={50 * 1024 * 1024}
                   bucket="campaign-videos"
-                  label="ဗီဒီယိုထည့်ပါ"
+                  label="Upload Video"
                   currentFile={adData.video_url}
                 />
               )}
@@ -286,7 +285,7 @@ export default function CreateAd() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>လုပ်ဆောင်ချက်များ</CardTitle>
+              <CardTitle>Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <Separator />
@@ -297,17 +296,17 @@ export default function CreateAd() {
                 disabled={loading}
               >
                 <Save className="h-4 w-4" />
-                {loading ? "ဖန်တီးနေသည်..." : "ကြော်ငြာ ဖန်တီးပါ"}
+                {loading ? "Creating..." : "Create Ad"}
               </Button>
             </CardContent>
           </Card>
 
-          {/* Ad Preview Card အသစ် */}
+          {/* Ad Preview Card */}
           <Card>
             <CardHeader>
-              <CardTitle>ကြော်ငြာ Preview</CardTitle>
+              <CardTitle>Ad Preview</CardTitle>
               <CardDescription>
-                သင့်ကြော်ငြာ မည်သို့ပေါ်လာမည်ကို ကြည့်ပါ။
+                See how your ad will appear to users.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -330,11 +329,11 @@ export default function CreateAd() {
                   variant="outline"
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Link သို့ သွားရန်
+                  Go to Link
                 </Button>
               )}
               {!adData.headline && !adData.description && !adData.image_url && !adData.video_url && !adData.link_url && (
-                <p className="text-center text-muted-foreground italic">အသေးစိတ်အချက်အလက်များကို ဖြည့်စွက်ပြီး preview ကြည့်ပါ။</p>
+                <p className="text-center text-muted-foreground italic">Fill in the details above to see a preview of your ad.</p>
               )}
             </CardContent>
           </Card>
